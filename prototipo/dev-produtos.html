@@ -1,0 +1,872 @@
+<title>Dev Produtos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --amarelo:#F2B705; --amarelo-ink:#1d1a10; --amarelo-soft:#FDF3D0;
+  --nav:#1E2124; --nav-2:#2A2E33; --nav-ink:#D9DCE0; --nav-muted:#8C939B;
+  --bg:#F2F3F1; --card:#FFFFFF; --ink:#1B1E22; --muted:#646A72; --line:#E1E3DF; --line-2:#ECEDEA;
+  --verde:#1E7F4A; --verde-bg:#E3F3E9;
+  --azul:#2359B8; --azul-bg:#E4ECFA;
+  --amar:#8A6200; --amar-bg:#FCF1CF;
+  --roxo:#6B43B8; --roxo-bg:#EEE7FA;
+  --cinza:#666C74; --cinza-bg:#ECEDEE;
+  --verm:#B8322A; --verm-bg:#FBE6E4;
+  --sim-bg:#FFF9E6;
+  --shadow:0 1px 2px rgba(20,22,25,.06),0 1px 1px rgba(20,22,25,.04);
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --amarelo-ink:#1d1a10; --amarelo-soft:#3a3014;
+    --nav:#111315; --nav-2:#1d2024; --nav-ink:#D9DCE0; --nav-muted:#7d848c;
+    --bg:#17191C; --card:#212428; --ink:#E8EAEC; --muted:#9BA2AA; --line:#33373C; --line-2:#2b2f33;
+    --verde:#5BC98A; --verde-bg:#1d3326; --azul:#7FA8F0; --azul-bg:#1c2a42;
+    --amar:#E8BE4C; --amar-bg:#3a3014; --roxo:#B399EC; --roxo-bg:#2c2440;
+    --cinza:#A4AAB1; --cinza-bg:#2c3035; --verm:#F08A80; --verm-bg:#3d2220; --sim-bg:#2d2915;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --amarelo-ink:#1d1a10; --amarelo-soft:#3a3014;
+  --nav:#111315; --nav-2:#1d2024; --nav-ink:#D9DCE0; --nav-muted:#7d848c;
+  --bg:#17191C; --card:#212428; --ink:#E8EAEC; --muted:#9BA2AA; --line:#33373C; --line-2:#2b2f33;
+  --verde:#5BC98A; --verde-bg:#1d3326; --azul:#7FA8F0; --azul-bg:#1c2a42;
+  --amar:#E8BE4C; --amar-bg:#3a3014; --roxo:#B399EC; --roxo-bg:#2c2440;
+  --cinza:#A4AAB1; --cinza-bg:#2c3035; --verm:#F08A80; --verm-bg:#3d2220; --sim-bg:#2d2915;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.45}
+button,input,select{font:inherit;color:inherit}
+.app{display:flex;min-height:100%}
+/* sidebar */
+.side{width:232px;flex:none;background:var(--nav);color:var(--nav-ink);display:flex;flex-direction:column;position:sticky;top:env(safe-area-inset-top,0px);height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px 16px;border-bottom:1px solid var(--nav-2)}
+.brand-mark{width:30px;height:30px;border-radius:6px;background:var(--amarelo);color:var(--amarelo-ink);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:17px}
+.brand-name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:.02em;line-height:1}
+.brand-sub{font-size:11px;color:var(--nav-muted);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.nav{padding:10px 8px;display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto}
+.nav-group{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--nav-muted);padding:14px 12px 6px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;color:var(--nav-ink);font-size:13.5px}
+.nav button:hover{background:var(--nav-2)}
+.nav button:focus-visible{outline:2px solid var(--amarelo);outline-offset:-2px}
+.nav button.on{background:var(--nav-2);color:#fff;box-shadow:inset 3px 0 0 var(--amarelo)}
+.nav svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7}
+.side-foot{padding:14px 18px;font-size:11.5px;color:var(--nav-muted);border-top:1px solid var(--nav-2)}
+/* main */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:none}
+.proto{background:var(--amarelo-soft);color:var(--ink);font-size:12.5px;padding:7px 24px;border-bottom:1px solid var(--line)}
+.proto b{font-weight:600}
+.page{padding-block:22px 40px;padding-inline:24px;display:flex;flex-direction:column;gap:18px;max-width:1440px;width:100%}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ph h1{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.05;margin:0;letter-spacing:.005em;text-wrap:balance}
+.ph .sub{color:var(--muted);margin-top:4px}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:6px;padding:7px 12px;font-weight:500;font-size:13px}
+.btn:hover{border-color:var(--muted)}
+.btn:focus-visible{outline:2px solid var(--amarelo);outline-offset:1px}
+.btn.pri{background:var(--amarelo);border-color:var(--amarelo);color:var(--amarelo-ink)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line-2);flex-wrap:wrap}
+.card-h h2,.card-h h3{margin:0;font-size:14px;font-weight:600}
+.card-b{padding:14px 16px}
+.hint{color:var(--muted);font-size:12.5px}
+/* filtros */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filters select,.filters input[type=search]{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:6px 8px;font-size:13px;max-width:100%}
+.filters label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;flex-direction:column;gap:3px}
+.chip-clear{border:none;background:none;color:var(--azul);cursor:pointer;font-size:12.5px;align-self:flex-end;padding:6px}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kpi{all:unset;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px 11px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--shadow);position:relative}
+.kpi:hover{border-color:var(--muted)}
+.kpi:focus-visible{outline:2px solid var(--amarelo)}
+.kpi.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.kpi .n{font-family:var(--display);font-size:34px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12.5px;color:var(--muted);line-height:1.25}
+.kpi .dot{position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%}
+.kpi.alert .n{color:var(--verm)}
+/* status */
+.st{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.c-verde{color:var(--verde);background:var(--verde-bg)} .c-azul{color:var(--azul);background:var(--azul-bg)}
+.c-amar{color:var(--amar);background:var(--amar-bg)} .c-roxo{color:var(--roxo);background:var(--roxo-bg)}
+.c-cinza{color:var(--cinza);background:var(--cinza-bg)} .c-verm{color:var(--verm);background:var(--verm-bg)}
+.bg-verde{background:var(--verde)} .bg-azul{background:var(--azul)} .bg-amar{background:var(--amar)} .bg-roxo{background:var(--roxo)} .bg-cinza{background:var(--cinza)} .bg-verm{background:var(--verm)}
+/* funil */
+.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+.phase{all:unset;cursor:pointer;padding:14px 16px;border-right:1px solid var(--line-2);position:relative;display:flex;flex-direction:column;gap:4px}
+.phase:last-child{border-right:none}
+.phase:hover{background:var(--line-2)}
+.phase:focus-visible{outline:2px solid var(--amarelo);outline-offset:-2px}
+.phase.sel{background:var(--amarelo-soft)}
+.phase .k{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.phase .t{font-weight:600;font-size:13.5px;line-height:1.25;min-height:2.5em}
+.phase .n{font-family:var(--display);font-size:30px;font-weight:600;line-height:1}
+.phase .steps{font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+/* tabelas */
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--card);position:sticky;top:0}
+td{padding:9px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--line-2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.code{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.pname{font-weight:600}
+.late{color:var(--verm);font-weight:600;font-variant-numeric:tabular-nums}
+.ni{color:var(--muted);font-style:italic}
+.bar{height:6px;background:var(--line-2);border-radius:3px;overflow:hidden;min-width:70px;display:flex}
+.bar i{display:block;height:100%}
+.pct{display:flex;align-items:center;gap:8px}
+.pct span{font-variant-numeric:tabular-nums;font-size:12px;width:34px;text-align:right}
+.segbar{display:grid;grid-template-columns:7fr 5fr 5fr 3fr 1fr;gap:3px;min-width:180px}
+.segbar div{height:8px;border-radius:2px;background:var(--line-2);overflow:hidden}
+.segbar div i{display:block;height:100%;background:var(--ink)}
+/* projeto */
+.phead{display:grid;grid-template-columns:1fr auto;gap:16px;padding:16px}
+.phead h1{font-family:var(--display);font-size:28px;font-weight:600;margin:2px 0 6px;line-height:1.05;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:500}
+.big-pct{text-align:right}
+.big-pct .n{font-family:var(--display);font-size:40px;font-weight:600;line-height:1}
+.back{all:unset;cursor:pointer;color:var(--muted);font-size:12.5px}
+.back:hover{color:var(--ink)}
+.timeline{display:grid;grid-template-columns:7fr 5fr 5fr 3fr 1.3fr;gap:10px;padding:0 16px 16px}
+.tl-phase .k{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-steps{display:flex;gap:3px}
+.tl-step{border:0;margin:0;padding:0;appearance:none;cursor:pointer;flex:1;height:30px;border-radius:4px;display:grid;place-items:center;font-family:var(--mono);font-size:11.5px;font-weight:500;min-width:22px}
+.tl-step:focus-visible{outline:2px solid var(--amarelo);outline-offset:1px}
+.tl-step.sel{outline:2px solid var(--ink);outline-offset:1px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;padding:0 8px}
+.tab{all:unset;cursor:pointer;padding:11px 12px;font-size:13px;color:var(--muted);white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--amarelo);font-weight:600}
+.tab:focus-visible{outline:2px solid var(--amarelo);outline-offset:-2px}
+.tab.ghost{opacity:.55}
+.tabs-tools{display:flex;justify-content:flex-end;padding:8px 16px 0}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.kv{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:7px 16px;font-size:13px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.gate{border-left:3px solid var(--amar);background:var(--amar-bg);padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px}
+.gate.red{border-color:var(--verm);background:var(--verm-bg)}
+.gate.ok{border-color:var(--verde);background:var(--verde-bg)}
+.gate ul{margin:6px 0 0;padding-left:18px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:6px 12px;font-size:12.5px}
+.seg button.on{background:var(--ink);color:var(--card)}
+.seg button:focus-visible{outline:2px solid var(--amarelo);outline-offset:-2px}
+.money{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cur{font-size:11px;color:var(--muted);font-family:var(--mono);margin-right:3px}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.stat{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.stat .l{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--display);font-size:30px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .s{font-size:12px;color:var(--muted)}
+.stat.usd{border-top:3px solid var(--azul)} .stat.brl{border-top:3px solid var(--verde)} .stat.fz{border-top:3px solid var(--amarelo)}
+.range{position:relative;height:56px;margin:12px 8px 4px}
+.range .track{position:absolute;left:0;right:0;top:22px;height:10px;background:linear-gradient(90deg,var(--verde-bg),var(--azul-bg),var(--verm-bg));border-radius:5px;border:1px solid var(--line)}
+.range .tick{position:absolute;top:14px;width:2px;height:26px;background:var(--muted)}
+.range .tl{position:absolute;top:42px;font-size:11px;color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.range .fz{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.range .fz b{font-size:11px;background:var(--amarelo);color:var(--amarelo-ink);padding:1px 6px;border-radius:3px;white-space:nowrap}
+.range .fz i{width:3px;height:30px;background:var(--amarelo);border:1px solid var(--amarelo-ink)}
+.sim{background:var(--sim-bg);border:1px dashed var(--amar);border-radius:8px}
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.sim-grid label{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sim-grid input{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:7px 9px;font-size:14px;font-variant-numeric:tabular-nums;width:100%}
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line-2)}
+.hist .d{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.hist .who{font-size:12px;color:var(--muted)}
+.diff{font-family:var(--mono);font-size:12px}
+.diff s{color:var(--verm)} .diff ins{color:var(--verde);text-decoration:none}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.drawer-bg{display:none}
+@media (max-width:900px){
+  .side{position:fixed;left:0;top:0;bottom:0;height:auto;z-index:30;transform:translateX(-100%);transition:transform .2s ease;padding-top:env(safe-area-inset-top,0px)}
+  .app.open .side{transform:none}
+  .app.open .drawer-bg{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}
+  .topbar{display:flex;align-items:center;gap:12px;background:var(--nav);color:#fff;padding:10px 16px;position:sticky;top:env(safe-area-inset-top,0px);z-index:10}
+  .topbar button{all:unset;cursor:pointer;display:grid;place-items:center;width:32px;height:32px}
+  .topbar svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2}
+  .page{padding-inline:16px}
+  .proto{padding-inline:16px}
+  .phases{grid-template-columns:1fr 1fr}
+  .phase{border-bottom:1px solid var(--line-2)}
+  .phead{grid-template-columns:1fr}
+  .big-pct{text-align:left}
+  .timeline{grid-template-columns:1fr}
+  .hist li{grid-template-columns:1fr;gap:2px}
+  table.cards thead{display:none}
+  table.cards tr{display:block;border-bottom:1px solid var(--line);padding:10px 12px}
+  table.cards td{display:flex;justify-content:space-between;gap:12px;border:none;padding:3px 0;text-align:right}
+  table.cards td::before{content:attr(data-l);color:var(--muted);font-size:12px;text-align:left}
+  table.cards td.first{display:block;text-align:left}
+  table.cards td.first::before{content:none}
+}
+@media (prefers-reduced-motion:reduce){.side{transition:none}}
+</style>
+
+<div class="app" id="app">
+  <div class="drawer-bg" id="drawerBg"></div>
+  <aside class="side" id="side">
+    <div class="brand"><div class="brand-mark">DP</div><div><div class="brand-name">Dev Produtos</div><div class="brand-sub">Máquinas em desenvolvimento</div></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">Protótipo v0.1 · especificação em <span style="font-family:var(--mono)">docs/forza-dev-produtos</span></div>
+  </aside>
+  <div class="main">
+    <div class="topbar"><button id="menuBtn" aria-label="Abrir menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><b style="font-family:var(--display);font-size:19px;font-weight:600">Dev Produtos</b></div>
+    <div class="proto"><b>Protótipo navegável.</b> Todos os projetos, fornecedores, preços e valores são <b>fictícios</b>, apenas para demonstrar telas e regras. Nenhum dado real da empresa ou dos concorrentes foi usado.</div>
+    <main class="page" id="page"></main>
+  </div>
+</div>
+
+<script>
+(function(){
+const HOJE = new Date(); HOJE.setHours(0,0,0,0);
+const DAY = 864e5;
+
+/* ---------- domínio ---------- */
+const FASES = [
+  {n:1,nome:"Pesquisa e viabilidade",de:1,ate:7},
+  {n:2,nome:"Amostra e homologação",de:8,ate:12},
+  {n:3,nome:"Preparação para venda",de:13,ate:17},
+  {n:4,nome:"Primeiro lote e lançamento",de:18,ate:20},
+  {n:5,nome:"Pós-lançamento",de:21,ate:21}
+];
+const ETAPAS = [
+ [1,"Pesquisa de mercado","Comercial + P&D","Resumo da oportunidade + preços com data e fonte",20],
+ [2,"Requisitos técnicos","P&D + Engenharia","Versão de requisitos aprovada",20],
+ [3,"Pesquisa de fornecedores","P&D + Comex","≥1 fornecedor apto a cotar",15],
+ [4,"Orçamento com fornecedores","Comex","≥1 cotação com FOB USD, validade e anexo",25],
+ [5,"Análise técnica das cotações","Engenharia","Matriz técnica completa + recomendação",15],
+ [6,"Cálculo de nacionalização","Comex","Nacionalização oficial aprovada",15],
+ [7,"Viabilidade econômica","P&D + Comercial","Decisão Avançar/Revisar/Encerrar registrada",10],
+ [8,"Auditoria do fornecedor","Qualidade/Engenharia","Relatório de auditoria ou dispensa justificada",20],
+ [9,"Pedido de amostra — Comex","Comex","Pedido com PO/proforma anexada",10],
+ [10,"Produção da amostra","Comex + P&D","Amostra embarcada + registros de produção",60],
+ [11,"Validação da amostra","Engenharia","Testes obrigatórios executados + resultado",20],
+ [12,"Definição final do produto","P&D","Configuração homologada congelada",10],
+ [13,"SKU e relatório técnico","Engenharia","SKU definitivo + relatório técnico",10],
+ [14,"Lista inicial de peças","Pós-Vendas","Lista de peças críticas e de desgaste",15],
+ [15,"Manuais e catálogo","Engenharia + Pós-Vendas","Documentos obrigatórios aprovados",30],
+ [16,"Treinamentos","Pós-Vendas + P&D","Treinamentos PV e Comercial com presença",15],
+ [17,"Integração com Marketing","Marketing","Pacote de informações validadas",10],
+ [18,"Pedido do primeiro lote","Comex","Pedido referenciando configuração homologada",15],
+ [19,"Recebimento do primeiro lote","Qualidade/Engenharia","Conferência lote × homologado",60],
+ [20,"Lançamento comercial","Comercial","Checklist de lançamento 100%",15],
+ [21,"Pós-lançamento","Pós-Vendas","Relatório de fechamento do período",180]
+].map(e=>({n:e[0],nome:e[1],area:e[2],evid:e[3],dur:e[4],fase:FASES.find(f=>e[0]>=f.de&&e[0]<=f.ate).n}));
+
+const ST = {
+ "Não iniciado":"cinza","Em andamento":"azul","Aguardando terceiro":"amar","Em validação":"azul",
+ "Concluído":"verde","Bloqueado":"verm","Cancelado":"verm","Não aplicável":"cinza"
+};
+const CATS = ["Elétrica contrabalançada","Diesel","GLP/Gasolina","Paleteira","Patolada","Retrátil","Plataforma","Outros"];
+
+/* ---------- dados de exemplo (fictícios) ---------- */
+const d = s => { const x=new Date(s+"T00:00:00"); return x; };
+const addDays = (dt,n)=> new Date(dt.getTime()+n*DAY);
+const rel = n => addDays(HOJE,n);
+const PROJ = [
+ {id:"PRJ-2026-001",nome:"Empilhadeira elétrica contrabalançada 3 t",modelo:"E30 (provisório)",cat:"Elétrica contrabalançada",resp:"Ana (P&D)",forn:"Fornecedor B",atual:6,stAtual:"Em andamento",prevAtual:rel(8),pend:"Confirmar despesas portuárias com despachante",extra:{3:"Concluído",5:"Concluído"},demo:true},
+ {id:"PRJ-2026-002",nome:"Paleteira elétrica 2 t",modelo:"P20 (provisório)",cat:"Paleteira",resp:"Bruno (P&D)",forn:"Fornecedor D",atual:10,stAtual:"Aguardando terceiro",terceiro:"Fornecedor",prevAtual:rel(-6),pend:"Fornecedor sem data de embarque da amostra"},
+ {id:"PRJ-2026-003",nome:"Empilhadeira diesel 5 t",modelo:"D50 (provisório)",cat:"Diesel",resp:"Carla (Engenharia)",forn:"Fornecedor A",atual:4,stAtual:"Em andamento",prevAtual:rel(12),pend:"Aguardando 2ª proposta com mastro triplex"},
+ {id:"PRJ-2026-004",nome:"Empilhadeira retrátil 1,6 t",modelo:"R16 (provisório)",cat:"Retrátil",resp:"Ana (P&D)",forn:"Fornecedor C",atual:11,stAtual:"Em validação",prevAtual:rel(-14),pend:"Teste de estabilidade reprovado, aguardando correção"},
+ {id:"PRJ-2025-007",nome:"Empilhadeira GLP 2,5 t",modelo:"G25",cat:"GLP/Gasolina",resp:"Diego (Pós-Vendas)",forn:"Fornecedor A",atual:16,stAtual:"Em andamento",prevAtual:rel(20),pend:"Agendar treinamento do Comercial",extra:{18:"Em andamento"},sku:"SKU definido"},
+ {id:"PRJ-2025-004",nome:"Paleteira patolada 1,5 t",modelo:"PT15",cat:"Patolada",resp:"Bruno (P&D)",forn:"Fornecedor D",atual:21,stAtual:"Em andamento",prevAtual:rel(95),pend:"2 ocorrências de garantia em análise",sku:"SKU definido"},
+ {id:"PRJ-2026-005",nome:"Plataforma tesoura 8 m",modelo:"T8 (provisório)",cat:"Plataforma",resp:"Carla (Engenharia)",forn:"—",atual:2,stAtual:"Bloqueado",prevAtual:rel(-3),pend:"Definição de norma de segurança aplicável"},
+ {id:"PRJ-2026-006",nome:"Empilhadeira elétrica contrabalançada 2 t",modelo:"E20 (provisório)",cat:"Elétrica contrabalançada",resp:"Ana (P&D)",forn:"—",atual:1,stAtual:"Em andamento",prevAtual:rel(15),pend:"Levantar preços de 3 concorrentes"},
+ {id:"PRJ-2026-007",nome:"Empilhadeira elétrica 3,5 t lítio",modelo:"E35L",cat:"Elétrica contrabalançada",resp:"Carla (Engenharia)",forn:"Fornecedor B",atual:13,stAtual:"Não iniciado",prevAtual:rel(10),pend:"Iniciar cadastro do SKU"},
+ {id:"PRJ-2025-002",nome:"Empilhadeira diesel 3 t",modelo:"D30",cat:"Diesel",resp:"Diego (Pós-Vendas)",forn:"Fornecedor A",atual:22,stAtual:"Concluído",prevAtual:rel(-40),pend:"",sku:"SKU definido",encerradoPos:true}
+];
+PROJ.forEach(p=>{
+  p.etapas = ETAPAS.map(e=>{
+    let st = e.n<p.atual?"Concluído":(e.n===p.atual?p.stAtual:"Não iniciado");
+    if(p.extra && p.extra[e.n]) st=p.extra[e.n];
+    return {n:e.n,status:st};
+  });
+  // datas previstas relativas à etapa atual
+  const ref = Math.min(p.atual,21);
+  let acc=0; const cum=[0];
+  ETAPAS.forEach(e=>{acc+=e.dur;cum.push(acc)});
+  p.etapas.forEach(et=>{
+    et.prev = addDays(p.prevAtual,(cum[et.n]-cum[ref]));
+    et.real = et.status==="Concluído"? addDays(et.prev, (et.n*7)%5-2):null;
+  });
+  const concl = p.etapas.filter(e=>e.status==="Concluído").length;
+  p.pct = Math.round(concl/21*100);
+  const cur = p.etapas.find(e=>e.status!=="Concluído");
+  p.etapaAtual = cur? cur.n : 21;
+  p.fase = ETAPAS[p.etapaAtual-1].fase;
+  p.lancado = p.etapas[19].status==="Concluído";
+  p.bloq = p.etapas.some(e=>e.status==="Bloqueado");
+  p.aguardForn = p.etapas.some(e=>e.status==="Aguardando terceiro") && p.terceiro==="Fornecedor";
+  p.atraso = 0;
+  p.etapas.forEach(e=>{ if(e.status!=="Concluído"){ const a=Math.round((HOJE-e.prev)/DAY); if(a>p.atraso)p.atraso=a; }});
+  p.statusExib = cur? cur.status : "Concluído";
+  p.prevExib = cur? cur.prev : p.etapas[20].prev;
+});
+
+function estagio(p){
+  const a=p.etapaAtual;
+  if(p.lancado) return "lancados";
+  if(a<=3) return "pesquisa";
+  if(a<=5) return "cotacao";
+  if(a<=7) return "viabilidade";
+  if(a<=9) return "auditoria";
+  if(a===10) return "producao";
+  if(a===11) return "validacao";
+  if(a===13 && p.etapas[12].status==="Não iniciado") return "homologados";
+  return "preparacao";
+}
+const KPIS = [
+ {k:"total",l:"Total de projetos",f:p=>true,c:"bg-cinza"},
+ {k:"dev",l:"Em desenvolvimento",f:p=>!p.lancado,c:"bg-azul"},
+ {k:"pesquisa",l:"Em pesquisa",f:p=>estagio(p)==="pesquisa",c:"bg-azul"},
+ {k:"cotacao",l:"Em cotação",f:p=>estagio(p)==="cotacao",c:"bg-amar"},
+ {k:"viabilidade",l:"Em viabilidade",f:p=>estagio(p)==="viabilidade",c:"bg-azul",novo:true},
+ {k:"auditoria",l:"Auditoria / pedido de amostra",f:p=>estagio(p)==="auditoria",c:"bg-roxo",novo:true},
+ {k:"aguardforn",l:"Aguardando fornecedor",f:p=>p.aguardForn,c:"bg-amar"},
+ {k:"producao",l:"Em produção de amostra",f:p=>estagio(p)==="producao",c:"bg-roxo"},
+ {k:"validacao",l:"Em validação",f:p=>estagio(p)==="validacao",c:"bg-roxo"},
+ {k:"homologados",l:"Homologados",f:p=>estagio(p)==="homologados",c:"bg-verde"},
+ {k:"preparacao",l:"Em preparação para lançamento",f:p=>estagio(p)==="preparacao",c:"bg-azul"},
+ {k:"lancados",l:"Lançados",f:p=>p.lancado,c:"bg-verde"},
+ {k:"atrasados",l:"Atrasados",f:p=>p.atraso>0 && !p.encerradoPos,c:"bg-verm",alert:true},
+ {k:"bloqueados",l:"Bloqueados",f:p=>p.bloq,c:"bg-verm",alert:true}
+];
+
+/* ---------- projeto demo: dados detalhados ---------- */
+const REQ = [
+ ["Capacidade","Capacidade nominal","MIN","3.000 kg","Obrigatório"],
+ ["Capacidade","Centro de carga","EXATO","500 mm","Obrigatório"],
+ ["Capacidade","Capacidade residual a 4.500 mm","MIN","2.500 kg","Obrigatório"],
+ ["Energia","Tensão da bateria","EXATO","80 V","Obrigatório"],
+ ["Energia","Capacidade da bateria","MIN","500 Ah","Obrigatório"],
+ ["Energia","Tipo de bateria","LISTA","Chumbo-ácido ou lítio","Desejável"],
+ ["Componentes","Controlador (marca)","TEXTO","Marca com assistência no Brasil","Obrigatório"],
+ ["Mastro","Tipo de mastro","LISTA","Duplex / Triplex","Obrigatório"],
+ ["Mastro","Altura máxima de elevação","MIN","4.500 mm","Obrigatório"],
+ ["Mastro","Elevação livre","MIN","150 mm","Desejável"],
+ ["Dimensões","Raio de giro","MAX","2.300 mm","Desejável"],
+ ["Desempenho","Velocidade com carga","MIN","13 km/h","Desejável"],
+ ["Desempenho","Rampa com carga","MIN","15 %","Obrigatório"],
+ ["Segurança","Sensor de presença no assento","LISTA","Série","Obrigatório"]
+];
+const MATRIZ = { // por requisito: [Forn A, Forn B, Forn C] => [valor, resultado]
+ 0:[["3.000 kg","Atende"],["3.000 kg","Atende"],["3.000 kg","Atende"]],
+ 1:[["500 mm","Atende"],["500 mm","Atende"],["500 mm","Atende"]],
+ 2:[["2.450 kg","Não atende"],["2.600 kg","Superior"],["",""]],
+ 3:[["80 V","Atende"],["80 V","Atende"],["72 V","Não atende"]],
+ 4:[["560 Ah","Superior"],["500 Ah","Atende"],["600 Ah","Superior"]],
+ 5:[["Chumbo-ácido","Atende"],["Lítio","Atende"],["Chumbo-ácido","Atende"]],
+ 6:[["Marca X","Pendente"],["Marca Y","Atende"],["Marca própria","Não atende"]],
+ 7:[["Triplex","Atende"],["Duplex","Atende"],["Duplex","Atende"]],
+ 8:[["4.800 mm","Superior"],["4.500 mm","Atende"],["4.500 mm","Atende"]],
+ 9:[["",""],["160 mm","Superior"],["150 mm","Atende"]],
+ 10:[["2.350 mm","Não atende"],["2.280 mm","Superior"],["2.300 mm","Atende"]],
+ 11:[["14 km/h","Superior"],["13 km/h","Atende"],["12 km/h","Não atende"]],
+ 12:[["15 %","Atende"],["16 %","Superior"],["",""]],
+ 13:[["Série","Atende"],["Série","Atende"],["Opcional","Não atende"]]
+};
+const RES = {"Atende":"verde","Superior":"verde","Não atende":"verm","Pendente":"amar","Não informado":"cinza"};
+const COTS = [
+ {f:"Fornecedor A",pais:"China",modelo:"FA-30E",fob:18400,prazoFab:60,prazoEnt:45,gar:"12 meses",qtd:6,val:rel(40),st:"Em análise",c:"azul"},
+ {f:"Fornecedor B",pais:"China",modelo:"FB-E3.0",fob:17250,prazoFab:50,prazoEnt:45,gar:"18 meses",qtd:6,val:rel(25),st:"Recomendada",c:"verde"},
+ {f:"Fornecedor C",pais:"China",modelo:"C3000",fob:15900,prazoFab:45,prazoEnt:45,gar:"12 meses",qtd:7,val:rel(-5),st:"Vencida",c:"verm"}
+];
+const CONC_MOD = [
+ {emp:"Concorrente A (exemplo)",modelo:"A-3.0E",eq:"Equivalente",preco:229900,tipo:"Anunciado",dias:30,fonte:"Site do concorrente",imp:"Com impostos",esp:["3.000 kg","500 mm","2.550 kg","80 V","500 Ah","Duplex","4.500 mm","2.290 mm","13 km/h","15 %"],gar:"12 meses",ac:"Side shift"},
+ {emp:"Concorrente B (exemplo)",modelo:"B30",eq:"Equivalente",preco:214000,tipo:"Anunciado",dias:55,fonte:"Proposta a cliente",imp:"Com impostos",esp:["3.000 kg","500 mm","2.500 kg","80 V","560 Ah","Duplex","4.500 mm","2.320 mm","12 km/h","15 %"],gar:"12 meses",ac:"—"},
+ {emp:"Concorrente C (exemplo)",modelo:"CX-30",eq:"Equivalente",preco:239000,tipo:"Anunciado",dias:12,fonte:"Feira do setor",imp:"Com impostos",esp:["3.000 kg","500 mm","2.600 kg","80 V","600 Ah","Triplex","4.800 mm","2.300 mm","14 km/h","16 %"],gar:"24 meses",ac:"Side shift, câmera"},
+ {emp:"Concorrente D (exemplo)",modelo:"D-35",eq:"Parcialmente equivalente",preco:245000,tipo:"Anunciado",dias:20,fonte:"Site do concorrente",imp:"Com impostos",esp:["3.500 kg","500 mm","3.000 kg","80 V","700 Ah","Triplex","4.500 mm","2.450 mm","13 km/h","15 %"],gar:"12 meses",ac:"Side shift"},
+ {emp:"Concorrente E (exemplo)",modelo:"E30",eq:"Equivalente",preco:198000,tipo:"Negociado",dias:40,fonte:"Relato de cliente",imp:"Com impostos",esp:["3.000 kg","500 mm","","80 V","500 Ah","Duplex","4.500 mm","","",""],gar:"12 meses",ac:"—"},
+ {emp:"Concorrente F (exemplo)",modelo:"F-3T",eq:"Equivalente",preco:205000,tipo:"Anunciado",dias:240,fonte:"Catálogo impresso",imp:"Com impostos",esp:["3.000 kg","500 mm","2.500 kg","80 V","500 Ah","Duplex","4.500 mm","2.300 mm","13 km/h","15 %"],gar:"12 meses",ac:"—"},
+ {emp:"Concorrente G (exemplo)",modelo:"G2.5",eq:"Não equivalente",preco:176000,tipo:"Anunciado",dias:18,fonte:"Site do concorrente",imp:"Com impostos",esp:["2.500 kg","500 mm","2.100 kg","48 V","400 Ah","Duplex","3.000 mm","2.100 mm","11 km/h","12 %"],gar:"12 meses",ac:"—"}
+];
+const FZ_ESP = ["3.000 kg","500 mm","2.600 kg","80 V","500 Ah","Duplex","4.500 mm","2.280 mm","13 km/h","16 %"];
+const ESP_NOMES = ["Capacidade nominal","Centro de carga","Capacidade residual","Tensão da bateria","Capacidade da bateria","Tipo de mastro","Altura de elevação","Raio de giro","Velocidade c/ carga","Rampa c/ carga"];
+const ESP_DIR = ["MAIOR","IGUAL","MAIOR","IGUAL","MAIOR","IGUAL","MAIOR","MENOR","MAIOR","MAIOR"];
+const EQ = {"Equivalente":"verde","Parcialmente equivalente":"amar","Não equivalente":"verm"};
+const DIAS_DESATUALIZADO = 180;
+const PRECO_FZ = 219000;
+const NAC = {fob:17250,qtd:6,freteCont:4800,seguroPct:0.5,cambio:5.40,tribPct:55,portCont:6000,impCont:3500,transpCont:4200,outrosUn:1000};
+let SIM = Object.assign({},NAC,{margem:30,preco:PRECO_FZ});
+let CENARIOS = [
+ {nome:"Câmbio 5,80",desc:"Estresse de câmbio",v:Object.assign({},NAC,{cambio:5.80,margem:30,preco:PRECO_FZ})}
+];
+const HIST = [
+ [-2,"Ana (P&D)","Nacionalização","Rascunho v2 criado a partir da cotação do Fornecedor B","",""],
+ [-5,"Carla (Engenharia)","Análise técnica","Resultado final alterado · Controlador — Fornecedor A","Atende","Pendente"],
+ [-6,"Carla (Engenharia)","Etapa 05","Status alterado","Em validação","Concluído"],
+ [-9,"Comex","Cotação Fornecedor C","Status automático por validade","Recebida","Vencida"],
+ [-14,"Ana (P&D)","Requisitos","Nova versão v2 aprovada · motivo: incluir sensor de presença obrigatório","v1","v2"],
+ [-20,"Ana (P&D)","Etapa 04","Data prevista alterada · motivo: fornecedor pediu prazo extra",fmtD(rel(-26)),fmtD(rel(-22))],
+ [-35,"Comercial","Concorrentes","Preço registrado · Concorrente C (exemplo) · fonte: Feira do setor","","R$ 239.000"]
+];
+const ANEXOS = [
+ ["Cotação","Proposta_FornecedorB_rev2.pdf","Cotação Fornecedor B","Etapa 04",true,-11],
+ ["Cotação","Proposta_FornecedorA.pdf","Cotação Fornecedor A","Etapa 04",true,-16],
+ ["Planilha","Matriz_tecnica_v2.xlsx","Análise técnica","Etapa 05",true,-6],
+ ["PDF","Resumo_oportunidade.pdf","Pesquisa de mercado","Etapa 01",true,-60],
+ ["Foto","Catalogo_concorrenteC.jpg","Concorrente C (exemplo)","Etapa 01",false,-35],
+ ["Documento técnico","Requisitos_v2.pdf","Requisitos técnicos","Etapa 02",true,-14]
+];
+
+/* ---------- utilidades ---------- */
+function fmtD(dt){ if(!dt) return "—"; return dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"}); }
+const nf0 = new Intl.NumberFormat("pt-BR",{maximumFractionDigits:0});
+const nf2 = new Intl.NumberFormat("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const usd = v => `<span class="money"><span class="cur">USD</span>${nf2.format(v)}</span>`;
+const brl = v => `<span class="money"><span class="cur">R$</span>${nf0.format(v)}</span>`;
+const badge = (txt,c) => `<span class="st c-${c}">${txt}</span>`;
+const stBadge = s => badge(s, ST[s]||"cinza");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ni = `<span class="ni">Não informado</span>`;
+const bar = (pct,cls="bg-verde") => `<div class="pct"><div class="bar" style="flex:1"><i class="${cls}" style="width:${pct}%"></i></div><span>${pct}%</span></div>`;
+function phaseBar(p){
+  return `<div class="segbar" title="Avanço por fase">${FASES.map(f=>{
+    const ets=p.etapas.filter(e=>e.n>=f.de&&e.n<=f.ate); const c=ets.filter(e=>e.status==="Concluído").length;
+    return `<div><i style="width:${Math.round(c/ets.length*100)}%"></i></div>`;}).join("")}</div>`;
+}
+function stepColor(p,et){
+  const s=et.status;
+  if(s==="Concluído") return "c-verde";
+  if(s==="Não iniciado") return "c-cinza";
+  if((et.n>=9&&et.n<=11) && (s==="Em andamento"||s==="Em validação"||s==="Aguardando terceiro")) return s==="Aguardando terceiro"?"c-amar":"c-roxo";
+  return "c-"+(ST[s]||"cinza");
+}
+
+/* ---------- estado ---------- */
+const state = {view:"dashboard",filters:{cat:"",resp:"",forn:"",st:"",fase:"",q:""},kpi:"",projeto:null,tab:"geral",allTabs:false,step:null,compMode:"forn",inclParcial:false,inclDesat:false,tipoPreco:"Anunciado"};
+try{ const t=localStorage.getItem("dp_tab"); if(t) state.lastTab=t; }catch(e){}
+
+/* ---------- navegação ---------- */
+const ICONS = {
+ dashboard:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+ projetos:'<path d="M3 7h18M3 12h18M3 17h12"/>',
+ concorrentes:'<circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M15 15.2c3 .1 6 1.6 6 4.8"/>',
+ fornecedores:'<path d="M3 21V9l6-4v4l6-4v4l6-4v16z"/><path d="M7 17h2M12 17h2M17 17h1"/>',
+ modelos:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+ acessorios:'<path d="M14 7l3-3 3 3-3 3M17 4v9a4 4 0 01-4 4H4"/><path d="M7 14l-3 3 3 3"/>',
+ config:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'
+};
+const NAV = [
+ ["g","Acompanhamento"],["dashboard","Dashboard"],["projetos","Projetos"],
+ ["g","Bases"],["concorrentes","Concorrentes"],["fornecedores","Fornecedores"],["modelos","Modelos e especificações"],["acessorios","Acessórios"],
+ ["g","Administração"],["config","Configurações"]
+];
+function renderNav(){
+  const active = state.view==="projeto"?"projetos":state.view;
+  document.getElementById("nav").innerHTML = NAV.map(([k,l])=> k==="g"?`<div class="nav-group">${l}</div>`:
+   `<button data-go="${k}" class="${active===k?"on":""}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${l}</button>`).join("");
+}
+function go(view){ state.view=view; if(view!=="projeto"){state.projeto=null;} closeDrawer(); render(); window.scrollTo(0,0); }
+function closeDrawer(){ document.getElementById("app").classList.remove("open"); }
+
+/* ---------- filtros ---------- */
+function filtered(){
+  const f=state.filters;
+  let list = PROJ.filter(p=>
+    (!f.cat||p.cat===f.cat)&&(!f.resp||p.resp===f.resp)&&(!f.forn||p.forn===f.forn)&&
+    (!f.st||p.statusExib===f.st)&&(!f.fase||String(p.fase)===f.fase)&&
+    (!f.q||(p.nome+p.id+p.modelo).toLowerCase().includes(f.q.toLowerCase())));
+  if(state.kpi){ const k=KPIS.find(x=>x.k===state.kpi); list=list.filter(k.f); }
+  return list;
+}
+function uniq(a){return [...new Set(a)].filter(x=>x&&x!=="—").sort();}
+function filtersHTML(){
+  const f=state.filters;
+  const sel=(id,label,opts,val)=>`<label for="${id}">${label}<select id="${id}" data-f="${id.replace('f_','')}"><option value="">Todos</option>${opts.map(o=>`<option value="${esc(o[0])}" ${String(val)===String(o[0])?"selected":""}>${esc(o[1])}</option>`).join("")}</select></label>`;
+  const any = Object.values(f).some(Boolean)||state.kpi;
+  return `<div class="filters">
+    ${sel("f_cat","Categoria",CATS.map(c=>[c,c]),f.cat)}
+    ${sel("f_resp","Responsável",uniq(PROJ.map(p=>p.resp)).map(c=>[c,c]),f.resp)}
+    ${sel("f_forn","Fornecedor",uniq(PROJ.map(p=>p.forn)).map(c=>[c,c]),f.forn)}
+    ${sel("f_st","Status",Object.keys(ST).map(c=>[c,c]),f.st)}
+    ${sel("f_fase","Fase",FASES.map(x=>[x.n,x.n+". "+x.nome]),f.fase)}
+    <label for="f_q">Busca<input type="search" id="f_q" data-f="q" placeholder="Projeto, código ou modelo" value="${esc(f.q)}"></label>
+    ${any?`<button class="chip-clear" data-act="clear">Limpar filtros${state.kpi?" e card":""}</button>`:""}
+  </div>`;
+}
+
+/* ---------- tabela principal ---------- */
+function mainTable(list){
+  if(!list.length) return `<div class="empty">Nenhum projeto com esses filtros.</div>`;
+  return `<div class="tw"><table class="cards"><thead><tr><th>Projeto</th><th>Modelo</th><th>Categoria</th><th>Responsável</th><th>Etapa atual</th><th>Status</th><th>Data prevista</th><th class="num">Dias de atraso</th><th>Principal pendência</th><th>Avanço</th></tr></thead><tbody>
+  ${list.map(p=>`<tr class="click" data-open="${p.id}" tabindex="0">
+    <td class="first"><div class="pname">${esc(p.nome)}</div><div class="code">${p.id}</div></td>
+    <td data-l="Modelo">${esc(p.modelo)}</td><td data-l="Categoria">${esc(p.cat)}</td><td data-l="Responsável">${esc(p.resp)}</td>
+    <td data-l="Etapa atual"><span class="code">${String(p.etapaAtual).padStart(2,"0")}</span> ${esc(ETAPAS[p.etapaAtual-1].nome)}</td>
+    <td data-l="Status">${stBadge(p.statusExib)}</td>
+    <td data-l="Data prevista" style="font-variant-numeric:tabular-nums">${fmtD(p.prevExib)}</td>
+    <td data-l="Dias de atraso" class="num">${p.atraso>0&&!p.encerradoPos?`<span class="late">${p.atraso}</span>`:`<span class="hint">—</span>`}</td>
+    <td data-l="Pendência" style="max-width:260px">${p.pend?esc(p.pend):`<span class="hint">—</span>`}</td>
+    <td data-l="Avanço" style="min-width:130px">${bar(p.pct,p.lancado?"bg-verde":"bg-azul")}</td>
+  </tr>`).join("")}</tbody></table></div>`;
+}
+
+/* ---------- dashboard ---------- */
+function viewDashboard(){
+  const base = PROJ.filter(p=>{const f=state.filters;return (!f.cat||p.cat===f.cat)&&(!f.resp||p.resp===f.resp)&&(!f.forn||p.forn===f.forn)&&(!f.st||p.statusExib===f.st)&&(!f.fase||String(p.fase)===f.fase)&&(!f.q||(p.nome+p.id).toLowerCase().includes(f.q.toLowerCase()));});
+  const list = filtered();
+  const kp = KPIS.map(k=>{const n=base.filter(k.f).length;return `<button class="kpi ${k.alert&&n?"alert":""} ${state.kpi===k.k?"sel":""}" data-kpi="${k.k}" title="${k.novo?"Card proposto (PD-002)":""}"><span class="dot ${k.c}"></span><span class="n">${n}</span><span class="l">${k.l}${k.novo?' <span class="code">· proposto</span>':""}</span></button>`}).join("");
+  const ph = FASES.map(f=>{const n=base.filter(p=>p.fase===f.n&&!(p.encerradoPos)).length;return `<button class="phase ${state.filters.fase===String(f.n)?"sel":""}" data-fase="${f.n}"><span class="k">Fase ${f.n}</span><span class="t">${f.nome}</span><span class="n">${n}</span><span class="steps">etapas ${String(f.de).padStart(2,"0")}${f.de!==f.ate?"–"+String(f.ate).padStart(2,"0"):""}</span></button>`}).join("");
+  const kSel = state.kpi?KPIS.find(k=>k.k===state.kpi).l:"";
+  return `
+  <div class="ph"><div><h1>Dashboard</h1><div class="sub">Projetos de desenvolvimento de máquinas, da pesquisa ao pós-lançamento</div></div>
+    <button class="btn pri" data-act="novo">+ Novo projeto</button></div>
+  ${filtersHTML()}
+  <div class="kpis">${kp}</div>
+  <section class="card"><div class="card-h"><h2>Projetos por fase</h2><span class="hint">Clique na fase para filtrar</span></div><div class="phases">${ph}</div></section>
+  <section class="card"><div class="card-h"><h2>Progresso dos projetos${kSel?` · <span style="color:var(--muted);font-weight:500">${kSel}</span>`:""}</h2><span class="hint">${list.length} projeto(s)</span></div>
+    <div class="tw"><table class="cards"><thead><tr><th>Projeto</th><th>Fases 1 → 5</th><th>Etapa atual</th><th>Avanço</th></tr></thead><tbody>
+    ${list.map(p=>`<tr class="click" data-open="${p.id}" tabindex="0"><td class="first"><div class="pname">${esc(p.nome)}</div><div class="code">${p.id}</div></td><td data-l="Fases">${phaseBar(p)}</td><td data-l="Etapa atual">${stBadge(p.statusExib)} <span class="hint">${String(p.etapaAtual).padStart(2,"0")} · ${esc(ETAPAS[p.etapaAtual-1].nome)}</span></td><td data-l="Avanço" style="min-width:130px">${bar(p.pct,p.lancado?"bg-verde":"bg-azul")}</td></tr>`).join("")||`<tr><td colspan="4" class="empty">Nenhum projeto.</td></tr>`}
+    </tbody></table></div></section>
+  <section class="card"><div class="card-h"><h2>Tabela principal</h2><div class="legend">${Object.entries(ST).filter(([k])=>k!=="Não aplicável").map(([k,c])=>badge(k,c)).join("")}</div></div>${mainTable(list)}</section>`;
+}
+function viewProjetos(){
+  const list=filtered();
+  return `<div class="ph"><div><h1>Projetos</h1><div class="sub">${list.length} de ${PROJ.length} projetos</div></div><button class="btn pri" data-act="novo">+ Novo projeto</button></div>
+  ${filtersHTML()}
+  <section class="card">${mainTable(list)}</section>`;
+}
+
+/* ---------- projeto ---------- */
+const TABS = [
+ ["geral","Visão geral",0],["requisitos","Requisitos técnicos",1],["fornecedores","Fornecedores",1],["cotacoes","Cotações",1],
+ ["comparacao","Comparação técnica",1],["concorrentes","Concorrentes",1],["precificacao","Precificação",1],["nacionalizacao","Nacionalização",1],
+ ["viabilidade","Viabilidade",1],["amostra","Amostra",2],["testes","Testes",2],["homologacao","Homologação",2],["documentacao","Documentação",3],
+ ["pecas","Peças",3],["treinamentos","Treinamentos",3],["lote","Primeiro lote",4],["pos","Pós-lançamento",5],["historico","Histórico",0],["anexos","Anexos",0]
+];
+function viewProjeto(){
+  const p = PROJ.find(x=>x.id===state.projeto);
+  const visible = TABS.filter(t=>t[2]===0||t[2]<=p.fase);
+  const tabs = (state.allTabs?TABS:visible);
+  if(!tabs.find(t=>t[0]===state.tab)) state.tab="geral";
+  const tl = FASES.map(f=>`<div class="tl-phase"><div class="k">${f.n}. ${f.nome}</div><div class="tl-steps">${p.etapas.filter(e=>e.n>=f.de&&e.n<=f.ate).map(e=>`<button class="tl-step ${stepColor(p,e)} ${state.step===e.n?"sel":""}" data-step="${e.n}" title="${e.n}. ${esc(ETAPAS[e.n-1].nome)} · ${e.status}" aria-label="Etapa ${e.n}: ${esc(ETAPAS[e.n-1].nome)}, ${e.status}">${String(e.n).padStart(2,"0")}</button>`).join("")}</div></div>`).join("");
+  return `
+  <div><button class="back" data-go="projetos">← Projetos</button></div>
+  <section class="card">
+    <div class="phead"><div>
+      <div class="code">${p.id} · ${esc(p.cat)}</div>
+      <h1>${esc(p.nome)}</h1>
+      <div class="meta"><span>Modelo <b>${esc(p.modelo)}</b></span><span>Responsável <b>${esc(p.resp)}</b></span><span>Etapa atual <b>${String(p.etapaAtual).padStart(2,"0")} · ${esc(ETAPAS[p.etapaAtual-1].nome)}</b></span><span>Status ${stBadge(p.statusExib)}</span><span>SKU <b>${p.sku?esc(p.sku):'<span class="ni">bloqueado até a etapa 12</span>'}</b></span><span>Fornecedor ${p.etapas[11].status==="Concluído"?"homologado":"em avaliação"} <b>${esc(p.forn)}</b></span></div>
+    </div><div class="big-pct"><div class="n">${p.pct}%</div><div class="hint">${p.etapas.filter(e=>e.status==="Concluído").length} de 21 etapas concluídas</div>${p.atraso>0&&!p.encerradoPos?`<div class="late" style="margin-top:4px">${p.atraso} dias de atraso</div>`:""}</div></div>
+    <div class="timeline">${tl}</div>
+    ${state.step?stepPanel(p,state.step):""}
+  </section>
+  <section class="card">
+    <div class="tabs" role="tablist">${tabs.map(t=>`<button class="tab ${state.tab===t[0]?"on":""} ${!visible.includes(t)?"ghost":""}" data-tab="${t[0]}" role="tab">${t[1]}</button>`).join("")}</div>
+    <div class="tabs-tools"><label class="toggle"><input type="checkbox" id="allTabs" ${state.allTabs?"checked":""}> Mostrar todas as abas (${TABS.length-visible.length} ocultas pela fase)</label></div>
+    <div class="card-b">${tabContent(p)}</div>
+  </section>`;
+}
+function stepPanel(p,n){
+  const e=p.etapas[n-1], m=ETAPAS[n-1];
+  const concl = e.status==="Concluído";
+  const hasEv = p.demo && (n<=5 || n===6&&false);
+  let gateHtml="";
+  if(!concl){
+    const faltas=[];
+    if(!hasEv) faltas.push("Evidência: "+m.evid);
+    if(n===7) faltas.push("Etapas 01, 05 e 06 concluídas");
+    if(n===9) faltas.push("Viabilidade = Avançar e auditoria concluída/dispensada");
+    if(n===13) faltas.push("SKU só após etapa 12 concluída");
+    if(n===20) faltas.push("Checklist de lançamento 100% (produto, documentação, peças, treinamento, preço, suporte)");
+    gateHtml = `<div class="gate ${e.status==="Bloqueado"?"red":""}"><b>Para concluir falta:</b><ul>${faltas.map(f=>`<li>${esc(f)}</li>`).join("")}</ul></div>`;
+  } else gateHtml = `<div class="gate ok"><b>Concluída.</b> Evidência registrada: ${esc(m.evid)}.</div>`;
+  return `<div style="border-top:1px solid var(--line-2);padding:14px 16px;display:grid;gap:12px">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><span class="code">Etapa ${String(n).padStart(2,"0")} · Fase ${m.fase}</span><div style="font-weight:600;font-size:15px">${esc(m.nome)}</div></div>
+    <div style="display:flex;gap:8px"><button class="btn" data-act="closestep">Fechar</button><button class="btn pri" ${concl?"disabled":"disabled"} title="${concl?"Etapa já concluída":"Falta evidência ou pré-requisito"}">Concluir etapa</button></div></div>
+    <div class="grid2"><dl class="kv">
+      <dt>Status</dt><dd>${stBadge(e.status)}</dd><dt>Área responsável</dt><dd>${esc(m.area)}</dd><dt>Responsável</dt><dd>${esc(p.resp)}</dd><dt>Aprovador</dt><dd>${[7,12,20].includes(n)?"Diretoria":"Gestor P&D"}</dd>
+    </dl><dl class="kv">
+      <dt>Data prevista</dt><dd>${fmtD(e.prev)}</dd><dt>Data real</dt><dd>${e.real?fmtD(e.real):"—"}</dd><dt>Pendência</dt><dd>${n===p.etapaAtual&&p.pend?esc(p.pend):"—"}</dd><dt>Entrega exigida</dt><dd>${esc(m.evid)}</dd>
+    </dl></div>${gateHtml}</div>`;
+}
+function tabContent(p){
+  if(state.tab==="geral") return tabGeral(p);
+  if(state.tab==="historico") return p.demo?tabHist():emptyTab("Sem alterações registradas neste exemplo.");
+  if(state.tab==="anexos") return p.demo?tabAnexos():emptyTab("Sem anexos neste exemplo.");
+  if(!p.demo) return emptyTab("No protótipo, as abas detalhadas estão preenchidas apenas no projeto PRJ-2026-001.");
+  const f={requisitos:tabReq,fornecedores:tabForn,cotacoes:tabCot,comparacao:tabComp,concorrentes:tabConc,precificacao:tabPrec,nacionalizacao:tabNac,viabilidade:tabViab}[state.tab];
+  if(f) return f(p);
+  const t=TABS.find(x=>x[0]===state.tab);
+  return emptyTab(`Aba da fase ${t[2]}. Fica disponível para edição quando o projeto chegar nessa fase; até lá, somente leitura.`);
+}
+function emptyTab(msg){ return `<div class="empty">${esc(msg)}</div>`; }
+function tabGeral(p){
+  const pend = p.etapas.filter(e=>!["Concluído","Não iniciado"].includes(e.status));
+  const rows = FASES.map(f=>{const ets=p.etapas.filter(e=>e.n>=f.de&&e.n<=f.ate);const c=ets.filter(e=>e.status==="Concluído").length;return `<tr><td>${f.n}. ${f.nome}</td><td class="num">${c}/${ets.length}</td><td style="min-width:140px">${bar(Math.round(c/ets.length*100),"bg-azul")}</td></tr>`}).join("");
+  const ck = [["Produto (lote conforme)",p.etapas[18].status],["Documentação aprovada",p.etapas[14].status],["Peças disponíveis",p.etapas[13].status],["Treinamentos PV e Comercial",p.etapas[15].status],["Preço de venda aprovado",p.etapas[6].status],["Suporte Pós-Vendas apto",p.etapas[20].status==="Não iniciado"?"Não iniciado":"Concluído"]];
+  return `<div class="grid2">
+   <div class="card"><div class="card-h"><h3>Etapas em andamento</h3></div>
+    ${pend.length?`<div class="tw"><table><tbody>${pend.map(e=>`<tr class="click" data-step="${e.n}"><td><span class="code">${String(e.n).padStart(2,"0")}</span> ${esc(ETAPAS[e.n-1].nome)}</td><td>${stBadge(e.status)}</td><td class="num" style="font-variant-numeric:tabular-nums">${fmtD(e.prev)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="empty">Nenhuma etapa em andamento.</div>`}
+    ${p.pend?`<div class="card-b"><div class="hint">Principal pendência</div><div>${esc(p.pend)}</div></div>`:""}</div>
+   <div class="card"><div class="card-h"><h3>Avanço por fase</h3><span class="hint">peso 1 por etapa</span></div><div class="tw"><table><tbody>${rows}</tbody></table></div></div>
+   <div class="card"><div class="card-h"><h3>Checklist de lançamento</h3><span class="hint">RN-080</span></div><div class="tw"><table><tbody>${ck.map(c=>`<tr><td>${c[0]}</td><td>${c[1]==="Concluído"?badge("OK","verde"):badge("Pendente","cinza")}</td></tr>`).join("")}</tbody></table></div></div>
+  </div>`;
+}
+function tabReq(){
+  return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px"><div>Versão <b>v2</b> ${badge("Aprovada","verde")} <span class="hint">· aprovada por Carla (Engenharia) · v1 substituída</span></div><button class="btn">Criar nova versão</button></div>
+  <div class="hint" style="margin-bottom:8px">Só aparecem atributos aplicáveis à categoria <b>Elétrica contrabalançada</b>. Valores são exemplos.</div>
+  <div class="tw"><table><thead><tr><th>Grupo</th><th>Atributo</th><th>Critério</th><th>Valor-alvo</th><th>Prioridade</th></tr></thead><tbody>
+  ${REQ.map(r=>`<tr><td class="hint">${r[0]}</td><td>${r[1]}</td><td class="code">${r[2]}</td><td>${r[3]}</td><td>${r[4]==="Obrigatório"?badge("Obrigatório","azul"):badge("Desejável","cinza")}</td></tr>`).join("")}</tbody></table></div>
+  <h3 style="font-size:14px;margin:18px 0 8px">Acessórios compatíveis com a categoria</h3>
+  <div class="tw"><table><thead><tr><th>Acessório</th><th>Exigência no projeto</th></tr></thead><tbody>
+  <tr><td>Side shift</td><td>${badge("Opcional","cinza")}</td></tr><tr><td>Posicionador de garfos</td><td>${badge("Opcional","cinza")}</td></tr><tr><td>Câmera traseira</td><td>${badge("Opcional","cinza")}</td></tr><tr><td>Carregador rápido</td><td>${badge("Série","azul")}</td></tr></tbody></table></div>`;
+}
+function tabForn(){
+  return `<div class="tw"><table><thead><tr><th>Fornecedor</th><th>País</th><th>Homologação geral</th><th>Status no projeto</th><th>Auditoria</th><th>Peças</th></tr></thead><tbody>
+  <tr><td class="pname">Fornecedor A</td><td>China</td><td>${badge("Homologado","verde")}</td><td>${badge("Apto a cotar","verde")}</td><td>Última: ${fmtD(rel(-400))}</td><td>Boa</td></tr>
+  <tr><td class="pname">Fornecedor B</td><td>China</td><td>${badge("Não homologado","cinza")}</td><td>${badge("Apto a cotar","verde")}</td><td>${ni}</td><td>Boa</td></tr>
+  <tr><td class="pname">Fornecedor C</td><td>China</td><td>${badge("Não homologado","cinza")}</td><td>${badge("Apto a cotar","verde")}</td><td>${ni}</td><td>Limitada</td></tr>
+  <tr><td class="pname">Fornecedor E</td><td>Índia</td><td>${badge("Não homologado","cinza")}</td><td>${badge("Descartado","verm")} <span class="hint">sem linha 80 V</span></td><td>${ni}</td><td>${ni}</td></tr>
+  </tbody></table></div>`;
+}
+function tabCot(){
+  return `<div class="gate" style="margin-bottom:12px">FOB sempre em <b>USD</b>. Todas as cotações abaixo foram pedidas com os <b>requisitos v2</b>.</div>
+  <div class="tw"><table><thead><tr><th>Fornecedor</th><th>Modelo</th><th class="num">FOB unitário</th><th class="num">Prazo fab.</th><th class="num">Prazo entrega</th><th>Garantia</th><th class="num">Qtd./contêiner 40HC</th><th>Validade</th><th>Status</th></tr></thead><tbody>
+  ${COTS.map(c=>`<tr><td class="pname">${c.f}</td><td>${c.modelo}</td><td class="num">${usd(c.fob)}</td><td class="num">${c.prazoFab} d</td><td class="num">${c.prazoEnt} d</td><td>${c.gar}</td><td class="num">${c.qtd}</td><td>${fmtD(c.val)}</td><td>${badge(c.st,c.c)}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function tabComp(){
+  const seg = `<div class="seg" role="group"><button class="${state.compMode==="forn"?"on":""}" data-comp="forn">Fornecedores × requisitos</button><button class="${state.compMode==="conc"?"on":""}" data-comp="conc">Produto × concorrentes</button></div>`;
+  if(state.compMode==="forn"){
+    const resumo = [0,1,2].map(i=>{let at=0,na=0,pe=0;REQ.forEach((r,ri)=>{const x=MATRIZ[ri][i];const res=x[1]||"Não informado";if(r[4]==="Obrigatório"){if(res==="Atende"||res==="Superior")at++;else if(res==="Não atende")na++;else pe++;}});return {at,na,pe};});
+    const obr = REQ.filter(r=>r[4]==="Obrigatório").length;
+    return `<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">${seg}<span class="hint">Resultado sugerido automaticamente e confirmado pela Engenharia</span></div>
+    <div class="tw"><table><thead><tr><th>Requisito (v2)</th><th>Alvo</th>${COTS.map(c=>`<th>${c.f}</th>`).join("")}</tr></thead><tbody>
+    ${REQ.map((r,ri)=>`<tr><td>${r[1]}${r[4]==="Obrigatório"?' <span class="code">obr.</span>':""}</td><td class="code">${r[2]} ${r[3]}</td>${MATRIZ[ri].map(x=>`<td>${x[0]?esc(x[0]):ni} ${badge(x[1]||"Não informado",RES[x[1]||"Não informado"])}</td>`).join("")}</tr>`).join("")}
+    <tr><td colspan="2"><b>Obrigatórios atendidos</b></td>${resumo.map(s=>`<td><b style="font-variant-numeric:tabular-nums">${s.at}/${obr}</b> ${s.na?badge(s.na+" não atende","verm"):""} ${s.pe?badge(s.pe+" pendente","amar"):""}</td>`).join("")}</tr>
+    </tbody></table></div>`;
+  }
+  const mods = CONC_MOD.filter(m=>m.eq!=="Não equivalente");
+  const cmp=(fz,v,dir)=>{ if(!v) return ni; const a=parseFloat(fz.replace(/\./g,"").replace(",",".")),b=parseFloat(v.replace(/\./g,"").replace(",","."));
+    if(isNaN(a)||isNaN(b)||dir==="IGUAL") return v===fz?v:`<b>${v}</b>`;
+    if(a===b) return v; const better = dir==="MAIOR"?b>a:b<a;
+    return `<span style="color:var(--${better?"verde":"verm"})">${v} ${better?"▲":"▼"}</span>`; };
+  return `<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">${seg}<span class="hint">▲ melhor / ▼ pior que o produto em desenvolvimento · só modelos da mesma categoria</span></div>
+  <div class="tw"><table><thead><tr><th>Especificação</th><th style="background:var(--amarelo-soft)">Produto em desenvolvimento</th>${mods.map(m=>`<th>${m.emp.replace(" (exemplo)","")}<div style="text-transform:none;letter-spacing:0;margin-top:3px">${badge(m.eq==="Parcialmente equivalente"?"Parcial":m.eq,EQ[m.eq])}</div></th>`).join("")}</tr></thead><tbody>
+  ${ESP_NOMES.map((n,i)=>`<tr><td>${n}</td><td style="background:var(--amarelo-soft);font-weight:500">${FZ_ESP[i]}</td>${mods.map(m=>`<td>${cmp(FZ_ESP[i],m.esp[i],ESP_DIR[i])}</td>`).join("")}</tr>`).join("")}
+  <tr><td>Garantia</td><td style="background:var(--amarelo-soft)">18 meses</td>${mods.map(m=>`<td>${m.gar}</td>`).join("")}</tr>
+  <tr><td>Acessórios inclusos</td><td style="background:var(--amarelo-soft)">Carregador</td>${mods.map(m=>`<td>${m.ac}</td>`).join("")}</tr>
+  </tbody></table></div>
+  <div class="hint" style="margin-top:8px">O Concorrente G (exemplo) foi classificado como não equivalente (capacidade 2,5 t e bateria 48 V) e não aparece aqui. A equivalência nunca considera só a capacidade nominal.</div>`;
+}
+function tabConc(){
+  return `<div class="tw"><table><thead><tr><th>Concorrente</th><th>Modelo</th><th>Equivalência</th><th class="num">Preço</th><th>Tipo</th><th>Data da consulta</th><th>Fonte</th><th>Garantia</th></tr></thead><tbody>
+  ${CONC_MOD.map(m=>{const old=m.dias>DIAS_DESATUALIZADO;return `<tr><td class="pname">${m.emp}</td><td>${m.modelo}</td><td>${badge(m.eq,EQ[m.eq])}</td><td class="num">${brl(m.preco)}</td><td>${m.tipo}</td><td>${fmtD(rel(-m.dias))} ${old?badge("Desatualizado","amar"):""}</td><td>${m.fonte}</td><td>${m.gar}</td></tr>`}).join("")}
+  </tbody></table></div><div class="hint" style="margin-top:8px">Todo preço exige data e fonte (RN-011). Nova consulta gera novo registro, sem sobrescrever o anterior.</div>`;
+}
+function precoSet(){
+  return CONC_MOD.filter(m=> (m.eq==="Equivalente"||(state.inclParcial&&m.eq==="Parcialmente equivalente")) && m.tipo===state.tipoPreco && (state.inclDesat||m.dias<=DIAS_DESATUALIZADO));
+}
+function tabPrec(){
+  const set=precoSet(); const vals=set.map(m=>m.preco);
+  const toggles = `<div class="filters" style="margin-bottom:14px">
+   <label for="tp">Tipo de preço<select id="tp" data-pr="tipo"><option ${state.tipoPreco==="Anunciado"?"selected":""}>Anunciado</option><option ${state.tipoPreco==="Negociado"?"selected":""}>Negociado</option></select></label>
+   <label class="toggle" style="flex-direction:row;text-transform:none;letter-spacing:0;font-size:13px;align-self:flex-end;padding:6px 0"><input type="checkbox" data-pr="parcial" ${state.inclParcial?"checked":""}> Incluir parcialmente equivalentes</label>
+   <label class="toggle" style="flex-direction:row;text-transform:none;letter-spacing:0;font-size:13px;align-self:flex-end;padding:6px 0"><input type="checkbox" data-pr="desat" ${state.inclDesat?"checked":""}> Incluir preços com mais de ${DIAS_DESATUALIZADO} dias</label>
+   <span class="hint" style="align-self:flex-end;padding:6px 0">Base: preços com impostos</span></div>`;
+  if(!vals.length) return toggles+`<div class="empty">Nenhum preço atende aos filtros.</div>`;
+  const mn=Math.min(...vals),mx=Math.max(...vals),avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const diff=(PRECO_FZ-avg)/avg*100; const pos=mx>mn?(PRECO_FZ-mn)/(mx-mn)*100:50;
+  const posTxt = pos<0?"Abaixo da faixa":pos<=33?"Faixa inferior":pos<=66?"Faixa média":pos<=100?"Faixa superior":"Acima da faixa";
+  const minM=set.find(m=>m.preco===mn), maxM=set.find(m=>m.preco===mx);
+  const clamp=v=>Math.max(0,Math.min(100,v));
+  return toggles+`
+  ${vals.length<3?`<div class="gate" style="margin-bottom:12px">Amostra de mercado insuficiente: só ${vals.length} preço(s).</div>`:""}
+  <div class="split">
+   <div class="stat"><div class="l">Menor preço</div><div class="v">${brl(mn)}</div><div class="s">${minM.emp} · ${fmtD(rel(-minM.dias))}</div></div>
+   <div class="stat"><div class="l">Média de mercado</div><div class="v">${brl(avg)}</div><div class="s">n = ${vals.length} preço(s)</div></div>
+   <div class="stat"><div class="l">Maior preço</div><div class="v">${brl(mx)}</div><div class="s">${maxM.emp} · ${fmtD(rel(-maxM.dias))}</div></div>
+   <div class="stat fz"><div class="l">Preço projetado (nosso)</div><div class="v">${brl(PRECO_FZ)}</div><div class="s"><b style="color:var(--${diff>0?"amar":"verde"})">${diff>0?"+":""}${nf2.format(diff)}%</b> vs. média · ${posTxt}</div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><div class="card-h"><h3>Posicionamento na faixa de mercado</h3><span class="hint">${posTxt}</span></div><div class="card-b">
+   <div class="range"><div class="track"></div>
+    <div class="tick" style="left:0"></div><div class="tl" style="left:0;transform:none">${brl(mn)}</div>
+    <div class="tick" style="left:${(avg-mn)/(mx-mn||1)*100}%"></div><div class="tl" style="left:${(avg-mn)/(mx-mn||1)*100}%">média</div>
+    <div class="tick" style="right:0;left:auto"></div><div class="tl" style="right:0;left:auto;transform:none">${brl(mx)}</div>
+    <div class="fz" style="left:${clamp(pos)}%"><b>Nosso preço</b><i></i></div>
+   </div></div></div>
+  <div class="tw" style="margin-top:14px"><table><thead><tr><th>Considerados</th><th>Equivalência</th><th class="num">Preço</th><th>Data</th><th>Fonte</th><th>Acessórios inclusos</th><th>Garantia</th></tr></thead><tbody>
+  ${set.map(m=>`<tr><td>${m.emp} · ${m.modelo}</td><td>${badge(m.eq==="Parcialmente equivalente"?"Parcial":m.eq,EQ[m.eq])}</td><td class="num">${brl(m.preco)}</td><td>${fmtD(rel(-m.dias))}</td><td>${m.fonte}</td><td>${m.ac}</td><td>${m.gar}</td></tr>`).join("")}</tbody></table></div>`;
+}
+function calcNac(v){
+  const freteUn=v.freteCont/v.qtd, seguroUn=v.fob*v.seguroPct/100;
+  const base=(v.fob+freteUn+seguroUn)*v.cambio;
+  const trib=base*v.tribPct/100;
+  const port=v.portCont/v.qtd, imp=v.impCont/v.qtd, tr=v.transpCont/v.qtd;
+  const total=base+trib+port+imp+tr+v.outrosUn;
+  return {freteUn,seguroUn,base,trib,port,imp,tr,outros:v.outrosUn,total};
+}
+function tabNac(){
+  const o=calcNac(NAC), s=calcNac(SIM);
+  const margem = pr=>(pr-s.total)/pr*100;
+  const sugerido = s.total/(1-SIM.margem/100);
+  const linha=(l,v,sv,obs="")=>`<tr><td>${l}${obs?` <span class="hint">${obs}</span>`:""}</td><td class="num">${brl(v)}</td><td class="num">${brl(sv)}</td><td class="num" style="color:var(--${sv-v>0.5?"verm":sv-v<-0.5?"verde":"muted"})">${Math.abs(sv-v)<0.5?"—":(sv-v>0?"+":"")+nf0.format(sv-v)}</td></tr>`;
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px"><div>Nacionalização oficial <b>v1</b> ${badge("Rascunho","cinza")} <span class="hint">· base: cotação Fornecedor B · a v2 aguarda aprovação do Comex</span></div></div>
+  <div class="split">
+   <div class="stat usd"><div class="l">FOB unitário · da cotação</div><div class="v">${usd(NAC.fob)}</div><div class="s">Valor original, nunca convertido nem alterado</div></div>
+   <div class="stat brl"><div class="l">Custo nacionalizado por unidade</div><div class="v">${brl(o.total)}</div><div class="s">Câmbio premissa R$ ${nf2.format(NAC.cambio)} · ${fmtD(rel(-3))} · fonte: exemplo</div></div>
+   <div class="stat"><div class="l">Qtd. por contêiner</div><div class="v">${NAC.qtd}</div><div class="s">40HC · da cotação</div></div>
+  </div>
+  <div class="gate" style="margin-top:12px">A carga tributária de ${NAC.tribPct}% é um <b>parâmetro de exemplo</b>. No sistema real, alíquotas e bases de cálculo vêm do Comex por NCM (PD-007). Nada é pré-preenchido.</div>
+  <section class="sim" style="margin-top:16px"><div class="card-h" style="border-color:var(--amar)"><h3>Simulação de cenários · não altera os dados oficiais</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="resetsim">Voltar aos valores oficiais</button><button class="btn pri" data-act="savesim">Salvar cenário</button></div></div>
+   <div class="card-b" style="display:grid;gap:14px">
+    <div class="sim-grid">
+     <label for="s_cambio">Câmbio (R$/USD)<input id="s_cambio" data-sim="cambio" type="number" step="0.01" value="${SIM.cambio}"></label>
+     <label for="s_fob">FOB unitário (USD)<input id="s_fob" data-sim="fob" type="number" step="50" value="${SIM.fob}"></label>
+     <label for="s_frete">Frete int. por contêiner (USD)<input id="s_frete" data-sim="freteCont" type="number" step="100" value="${SIM.freteCont}"></label>
+     <label for="s_qtd">Qtd. por contêiner<input id="s_qtd" data-sim="qtd" type="number" min="1" step="1" value="${SIM.qtd}"></label>
+     <label for="s_margem">Margem desejada (%)<input id="s_margem" data-sim="margem" type="number" step="1" value="${SIM.margem}"></label>
+     <label for="s_preco">Preço de venda (R$)<input id="s_preco" data-sim="preco" type="number" step="1000" value="${SIM.preco}"></label>
+    </div>
+    <div class="split">
+     <div class="stat brl"><div class="l">Custo simulado / unidade</div><div class="v">${brl(s.total)}</div><div class="s">${s.total>o.total?"+":""}${nf0.format(s.total-o.total)} vs. oficial</div></div>
+     <div class="stat"><div class="l">Margem com o preço simulado</div><div class="v" style="color:var(--${margem(SIM.preco)<SIM.margem?"verm":"verde"})">${nf2.format(margem(SIM.preco))}%</div><div class="s">Meta: ${SIM.margem}% · conceito de margem a definir (PD-008)</div></div>
+     <div class="stat fz"><div class="l">Preço para a margem desejada</div><div class="v">${brl(sugerido)}</div><div class="s">custo ÷ (1 − margem)</div></div>
+    </div>
+    <div class="tw"><table><thead><tr><th>Composição por unidade</th><th class="num">Oficial</th><th class="num">Simulado</th><th class="num">Diferença</th></tr></thead><tbody>
+     ${linha("Base aduaneira (FOB + frete + seguro) × câmbio",o.base,s.base)}
+     ${linha("Tributos de importação",o.trib,s.trib,"exemplo")}
+     ${linha("Despesas portuárias",o.port,s.port,"rateio por contêiner")}
+     ${linha("Despesas de importação",o.imp,s.imp,"rateio por contêiner")}
+     ${linha("Transporte nacional",o.tr,s.tr,"rateio por contêiner")}
+     ${linha("Outros",o.outros,s.outros)}
+     <tr><td><b>Custo nacionalizado</b></td><td class="num"><b>${brl(o.total)}</b></td><td class="num"><b>${brl(s.total)}</b></td><td></td></tr>
+    </tbody></table></div>
+    ${CENARIOS.length?`<div><div class="hint" style="margin-bottom:6px">Cenários salvos</div><div class="tw"><table><thead><tr><th>Cenário</th><th class="num">Câmbio</th><th class="num">FOB</th><th class="num">Qtd.</th><th class="num">Custo / un.</th><th class="num">Margem</th><th></th></tr></thead><tbody>
+     ${CENARIOS.map((c,i)=>{const r=calcNac(c.v);return `<tr><td>${esc(c.nome)} <span class="hint">${esc(c.desc)}</span></td><td class="num">${nf2.format(c.v.cambio)}</td><td class="num">${usd(c.v.fob)}</td><td class="num">${c.v.qtd}</td><td class="num">${brl(r.total)}</td><td class="num">${nf2.format((c.v.preco-r.total)/c.v.preco*100)}%</td><td><button class="btn" data-loadsim="${i}">Carregar</button></td></tr>`}).join("")}
+    </tbody></table></div><div class="hint" style="margin-top:6px">Promover um cenário a oficial exige aprovador e gera histórico (RN-046).</div></div>`:""}
+   </div></section>`;
+}
+function tabViab(){
+  return `<div class="gate"><b>Etapa 07 ainda não pode iniciar.</b><ul><li>Etapa 01 Pesquisa de mercado ${badge("Concluído","verde")}</li><li>Etapa 05 Análise técnica ${badge("Concluído","verde")}</li><li>Etapa 06 Nacionalização ${badge("Em andamento","azul")}: falta nacionalização oficial aprovada</li></ul></div>
+  <div class="grid2" style="margin-top:14px"><dl class="kv"><dt>Decisão</dt><dd>${badge("Avançar","verde")} ${badge("Revisar","amar")} ${badge("Encerrar","verm")}</dd><dt>Obrigatórios</dt><dd>Responsável, data e observação</dd><dt>Aprovador</dt><dd>Diretoria</dd></dl>
+  <dl class="kv"><dt>Usará</dt><dd>Custo nacionalizado oficial, preço de venda estimado, margem, posicionamento de mercado, demanda, riscos e investimento</dd></dl></div>`;
+}
+function tabHist(){
+  return `<ul class="hist" style="margin:-14px -16px">${HIST.map(h=>`<li><div class="d">${fmtD(rel(h[0]))}</div><div><div><b>${esc(h[2])}</b> · ${esc(h[3])}</div>${h[4]||h[5]?`<div class="diff">${h[4]?`<s>${esc(h[4])}</s> → `:""}<ins>${esc(h[5])}</ins></div>`:""}<div class="who">${esc(h[1])}</div></div></li>`).join("")}</ul>`;
+}
+function tabAnexos(){
+  return `<div class="tw"><table><thead><tr><th>Arquivo</th><th>Tipo</th><th>Vinculado a</th><th>Etapa</th><th>Evidência</th><th>Enviado em</th></tr></thead><tbody>
+  ${ANEXOS.map(a=>`<tr><td style="font-family:var(--mono);font-size:12.5px">${esc(a[1])}</td><td>${a[0]}</td><td>${esc(a[2])}</td><td>${a[3]}</td><td>${a[4]?badge("Evidência","verde"):'<span class="hint">—</span>'}</td><td>${fmtD(rel(a[5]))}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+/* ---------- bases ---------- */
+function viewConcorrentes(){
+  const real=[["Heli","Fabricante / marca"],["Hangcha","Fabricante / marca"],["Netmak","Importador nacional"],["Craft","Importador nacional"],["Brutos","Importador nacional"],["TLM","Importador nacional"]];
+  return `<div class="ph"><div><h1>Concorrentes</h1><div class="sub">Base histórica compartilhada entre todos os projetos</div></div><button class="btn pri">+ Novo concorrente</button></div>
+  <section class="card"><div class="card-h"><h2>Carga inicial da especificação</h2><span class="hint">Sem modelos nem preços: serão registrados com data e fonte reais</span></div>
+  <div class="tw"><table><thead><tr><th>Empresa</th><th>Tipo</th><th class="num">Modelos</th><th class="num">Preços registrados</th><th>Última consulta</th></tr></thead><tbody>
+  ${real.map(r=>`<tr><td class="pname">${r[0]}</td><td>${r[1]}</td><td class="num">0</td><td class="num">0</td><td>${ni}</td></tr>`).join("")}</tbody></table></div></section>
+  <section class="card"><div class="card-h"><h2>Registros de exemplo do protótipo</h2><span class="hint">Fictícios, usados no projeto PRJ-2026-001</span></div>
+  <div class="tw"><table><thead><tr><th>Empresa</th><th>Modelo</th><th>Categoria</th><th class="num">Último preço</th><th>Data</th><th>Fonte</th></tr></thead><tbody>
+  ${CONC_MOD.map(m=>`<tr><td>${m.emp}</td><td>${m.modelo}</td><td>Elétrica contrabalançada</td><td class="num">${brl(m.preco)}</td><td>${fmtD(rel(-m.dias))}</td><td>${m.fonte}</td></tr>`).join("")}</tbody></table></div></section>`;
+}
+function viewFornecedores(){
+  const F=[["Fornecedor A","China","Empilhadeiras diesel, GLP e elétricas","Homologado","verde",3],["Fornecedor B","China","Elétricas e lítio","Não homologado","cinza",2],["Fornecedor C","China","Elétricas","Não homologado","cinza",1],["Fornecedor D","China","Paleteiras e patoladas","Homologado","verde",2],["Fornecedor E","Índia","Diesel","Não homologado","cinza",0]];
+  return `<div class="ph"><div><h1>Fornecedores</h1><div class="sub">Cadastro geral · o status em cada projeto fica dentro do projeto · dados fictícios</div></div><button class="btn pri">+ Novo fornecedor</button></div>
+  <section class="card"><div class="tw"><table class="cards"><thead><tr><th>Fornecedor</th><th>País</th><th>Linha de produtos</th><th>Homologação</th><th class="num">Projetos</th></tr></thead><tbody>
+  ${F.map(f=>`<tr><td class="first pname">${f[0]}</td><td data-l="País">${f[1]}</td><td data-l="Linha">${f[2]}</td><td data-l="Homologação">${badge(f[3],f[4])}</td><td data-l="Projetos" class="num">${f[5]}</td></tr>`).join("")}</tbody></table></div></section>`;
+}
+function viewModelos(){
+  return `<div class="ph"><div><h1>Modelos e especificações</h1><div class="sub">Uma ficha única para modelos nossos, de fornecedores e de concorrentes</div></div></div>
+  <section class="card"><div class="tw"><table><thead><tr><th>Modelo</th><th>Origem</th><th>Categoria</th><th>Capacidade</th></tr></thead><tbody>
+  <tr><td class="pname">E30 (provisório)</td><td>${badge("Nosso","azul")}</td><td>Elétrica contrabalançada</td><td>3.000 kg</td></tr>
+  ${COTS.map(c=>`<tr><td class="pname">${c.modelo}</td><td>${badge("Fornecedor","amar")} <span class="hint">${c.f}</span></td><td>Elétrica contrabalançada</td><td>3.000 kg</td></tr>`).join("")}
+  ${CONC_MOD.slice(0,4).map(m=>`<tr><td class="pname">${m.modelo}</td><td>${badge("Concorrente","roxo")} <span class="hint">${m.emp}</span></td><td>Elétrica contrabalançada</td><td>${m.esp[0]}</td></tr>`).join("")}
+  </tbody></table></div></section>`;
+}
+function viewAcessorios(){
+  const A=[["Side shift","Elétrica contrabalançada, Diesel, GLP/Gasolina, Retrátil"],["Posicionador de garfos","Elétrica contrabalançada, Diesel, GLP/Gasolina"],["Clamp","Elétrica contrabalançada, Diesel"],["Cabine","Diesel, GLP/Gasolina"],["Câmera","Elétrica contrabalançada, Retrátil"],["Altímetro","Retrátil"],["Aquecedor","Retrátil"],["Carregador rápido","Elétrica contrabalançada, Paleteira, Patolada, Retrátil"]];
+  return `<div class="ph"><div><h1>Acessórios</h1><div class="sub">Nenhum acessório aparece para todos: a compatibilidade é por categoria ou modelo</div></div></div>
+  <section class="card"><div class="tw"><table class="cards"><thead><tr><th>Acessório</th><th>Categorias compatíveis (exemplo)</th></tr></thead><tbody>${A.map(a=>`<tr><td class="first pname">${a[0]}</td><td data-l="Categorias">${a[1]}</td></tr>`).join("")}</tbody></table></div></section>`;
+}
+function viewConfig(){
+  return `<div class="ph"><div><h1>Configurações</h1><div class="sub">Etapas, pesos, categorias e cores de status</div></div></div>
+  <div class="grid2">
+  <section class="card"><div class="card-h"><h2>Etapas do processo</h2><span class="hint">peso padrão 1</span></div><div class="tw" style="max-height:520px;overflow:auto"><table><thead><tr><th>#</th><th>Etapa</th><th>Fase</th><th>Área</th><th class="num">Peso</th></tr></thead><tbody>
+  ${ETAPAS.map(e=>`<tr><td class="code">${String(e.n).padStart(2,"0")}</td><td>${e.nome}</td><td>${e.fase}</td><td class="hint">${e.area}</td><td class="num">1</td></tr>`).join("")}</tbody></table></div></section>
+  <div style="display:grid;gap:14px;align-content:start">
+  <section class="card"><div class="card-h"><h2>Cores de status</h2></div><div class="card-b" style="display:grid;gap:8px">
+   <div>${badge("Concluído / homologado","verde")}</div><div>${badge("Em andamento / análise","azul")}</div><div>${badge("Aguardando / negociação","amar")}</div><div>${badge("Amostra / testes","roxo")}</div><div>${badge("Não iniciado / pausado","cinza")}</div><div>${badge("Bloqueado / reprovado / cancelado","verm")}</div></div></section>
+  <section class="card"><div class="card-h"><h2>Categorias</h2></div><div class="card-b" style="display:flex;flex-wrap:wrap;gap:6px">${CATS.map(c=>badge(c,"cinza")).join("")}</div></section>
+  </div></div>`;
+}
+function viewNovo(){
+  return `<div><button class="back" data-go="projetos">← Projetos</button></div>
+  <div class="ph"><div><h1>Novo projeto</h1><div class="sub">Ao salvar, as 21 etapas são criadas automaticamente</div></div></div>
+  <section class="card"><form class="card-b sim-grid" id="novoForm" style="max-width:720px">
+   <label for="n_nome">Nome do projeto<input id="n_nome" required placeholder="Ex.: Empilhadeira elétrica 2,5 t"></label>
+   <label for="n_cat">Categoria<select id="n_cat" style="border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--card)">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></label>
+   <label for="n_resp">Responsável<input id="n_resp" placeholder="Nome"></label>
+   <label for="n_data">Previsão de lançamento<input id="n_data" type="date"></label>
+   <div style="grid-column:1/-1;display:flex;gap:8px;align-items:center"><button class="btn pri" type="submit">Criar projeto</button><span class="hint" id="novoMsg"></span></div>
+  </form></section>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderNav();
+  const v=state.view; const el=document.getElementById("page");
+  el.innerHTML = v==="dashboard"?viewDashboard():v==="projetos"?viewProjetos():v==="projeto"?viewProjeto():v==="concorrentes"?viewConcorrentes():v==="fornecedores"?viewFornecedores():v==="modelos"?viewModelos():v==="acessorios"?viewAcessorios():v==="config"?viewConfig():v==="novo"?viewNovo():"";
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-go],[data-kpi],[data-fase],[data-open],[data-tab],[data-step],[data-comp],[data-act],[data-loadsim]");
+  if(!t) return;
+  if(t.dataset.go){ go(t.dataset.go); return; }
+  if(t.dataset.kpi){ state.kpi = state.kpi===t.dataset.kpi?"":t.dataset.kpi; render(); return; }
+  if(t.dataset.fase){ state.filters.fase = state.filters.fase===t.dataset.fase?"":t.dataset.fase; render(); return; }
+  if(t.dataset.open){ state.projeto=t.dataset.open; state.view="projeto"; state.step=null; state.tab=(PROJ.find(p=>p.id===t.dataset.open).demo&&state.lastTab)||"geral"; render(); window.scrollTo(0,0); return; }
+  if(t.dataset.tab){ state.tab=t.dataset.tab; try{localStorage.setItem("dp_tab",state.tab);state.lastTab=state.tab;}catch(e){} render(); return; }
+  if(t.dataset.step){ const n=+t.dataset.step; state.step = state.step===n?null:n; render(); return; }
+  if(t.dataset.comp){ state.compMode=t.dataset.comp; render(); return; }
+  if(t.dataset.loadsim){ const c=CENARIOS[+t.dataset.loadsim]; SIM=Object.assign({},c.v); render(); return; }
+  const a=t.dataset.act;
+  if(a==="clear"){ state.filters={cat:"",resp:"",forn:"",st:"",fase:"",q:""}; state.kpi=""; render(); }
+  if(a==="closestep"){ state.step=null; render(); }
+  if(a==="novo"){ go("novo"); }
+  if(a==="resetsim"){ SIM=Object.assign({},NAC,{margem:30,preco:PRECO_FZ}); render(); }
+  if(a==="savesim"){ const r=calcNac(SIM); CENARIOS.push({nome:"Cenário "+(CENARIOS.length+1),desc:"câmbio "+nf2.format(SIM.cambio)+" · "+SIM.qtd+"/contêiner",v:Object.assign({},SIM)}); render(); }
+});
+document.addEventListener("keydown",ev=>{ if(ev.key==="Enter"){ const r=ev.target.closest("tr[data-open]"); if(r){ r.click(); } } });
+document.addEventListener("change",ev=>{
+  const t=ev.target;
+  if(t.dataset.f!==undefined && t.tagName==="SELECT"){ state.filters[t.dataset.f]=t.value; render(); }
+  if(t.id==="allTabs"){ state.allTabs=t.checked; render(); }
+  if(t.dataset.pr){ if(t.dataset.pr==="tipo")state.tipoPreco=t.value; if(t.dataset.pr==="parcial")state.inclParcial=t.checked; if(t.dataset.pr==="desat")state.inclDesat=t.checked; render(); }
+  if(t.dataset.sim){ const v=parseFloat(t.value); if(!isNaN(v)&&(t.dataset.sim!=="qtd"||v>=1)){ SIM[t.dataset.sim]=v; const id=t.id; render(); const n=document.getElementById(id); if(n) n.focus(); } }
+});
+let qTimer;
+document.addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.id==="f_q"){ clearTimeout(qTimer); qTimer=setTimeout(()=>{ state.filters.q=t.value; render(); const n=document.getElementById("f_q"); if(n){n.focus(); n.setSelectionRange(n.value.length,n.value.length);} },250); }
+});
+document.addEventListener("submit",ev=>{
+  if(ev.target.id==="novoForm"){ ev.preventDefault(); const m=document.getElementById("novoMsg"); m.textContent="No protótipo o projeto não é gravado. No sistema real, ele recebe o código PRJ-AAAA-NNN e as 21 etapas."; }
+});
+document.getElementById("menuBtn").addEventListener("click",()=>document.getElementById("app").classList.add("open"));
+document.getElementById("drawerBg").addEventListener("click",closeDrawer);
+
+render();
+})();
+</script>
