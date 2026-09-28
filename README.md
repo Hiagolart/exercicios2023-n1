@@ -3,4 +3,4 @@ Repositórios para armazenar exercícios de JS desenvolvidos no últimos mês
 
 ## desenvolvimento-produto
 
-Sistema de desenvolvimento de produto: painel do portfólio com os produtos em lançamento e tela com as etapas de desenvolvimento de cada máquina. Abra `desenvolvimento-produto/index.html` no navegador. Os produtos e as etapas ficam em `desenvolvimento-produto/data.js`.
+Sistema de desenvolvimento de produto: painel do portfólio com os produtos em lançamento, em cards separados por linha e tela com as etapas de desenvolvimento de cada máquina. Abra `desenvolvimento-produto/index.html` no navegador. Os produtos e as etapas ficam em `desenvolvimento-produto/data.js`.

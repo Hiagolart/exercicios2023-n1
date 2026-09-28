@@ -145,7 +145,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
 
 /* ---------- Títulos e rótulos ---------- */
 
-.secao-titulo { margin-bottom: 20px; }
+.secao-titulo { margin-bottom: 18px; }
 .secao-titulo h2 {
   margin: 0;
   font-family: var(--display);
@@ -166,72 +166,129 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
   margin: 0;
 }
 
-/* ---------- Lista de produtos ---------- */
+/* ---------- Filtros por linha ---------- */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  margin-bottom: 28px;
+  background: var(--parceria);
+  border-radius: 14px;
+  box-shadow: var(--sombra);
+}
+.filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #3d3d3a;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--futuro);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.filtro span { color: #a8a69f; font-weight: 500; font-variant-numeric: tabular-nums; }
+.filtro:hover { border-color: var(--amarelo); }
+.filtro.ativo { background: var(--amarelo); border-color: var(--amarelo); color: var(--parceria); }
+.filtro.ativo span { color: var(--forca); }
+
+/* ---------- Cards de produtos ---------- */
 
 .grade {
-  display: flex;
-  flex-direction: column;
-  border-top: 2px solid var(--texto);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
 }
 
 .card {
   display: flex;
-  align-items: center;
-  gap: 28px;
-  padding: 18px 8px;
-  border-bottom: 1px solid var(--linha-forte);
+  flex-direction: column;
+  background: var(--parceria);
+  color: var(--futuro);
+  border: 1px solid #3d3d3a;
+  border-radius: 18px;
+  overflow: hidden;
   cursor: pointer;
-  transition: background .15s;
+  box-shadow: var(--sombra);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
 }
-.card:hover { background: var(--superficie); }
+.card:hover { transform: translateY(-4px); border-color: var(--amarelo); }
+.card:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 3px; }
 
+/* A área da imagem é clara nos dois temas, como uma foto de estúdio. */
 .card-imagem {
-  flex: none;
-  width: 150px;
-  padding: 8px 10px;
-  background: var(--superficie);
-  border: 1px solid var(--borda);
-  border-radius: 8px;
+  --metal-escuro: #30302e;
+  --metal-claro: #6b6a64;
+  --pneu: #232323;
+  --aro: #b9b6ac;
+  position: relative;
+  padding: 26px 20px 18px;
+  background: radial-gradient(ellipse at 50% 30%, #ffffff 0%, #f2f0eb 55%, #d9d6cd 100%);
 }
-.card:hover .card-imagem { border-color: var(--linha-forte); }
-.card-imagem svg { display: block; width: 100%; height: 84px; }
+.card-imagem svg { display: block; width: 100%; height: 150px; }
+.card-numero {
+  position: absolute;
+  top: 12px; right: 12px;
+  display: grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--forca);
+  color: var(--futuro);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
 
-.card-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.card-info { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 18px; flex: 1; }
+.card-linha {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--amarelo);
+}
 .card-modelo {
   margin: 0;
   font-family: var(--display);
   font-style: italic;
   font-weight: 800;
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1;
   text-transform: uppercase;
 }
-.card-etapa { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
-.card-etapa span { color: var(--texto-suave); text-transform: uppercase; letter-spacing: .1em; font-size: 11px; }
-.card-etapa strong {
-  background: var(--amarelo);
-  color: var(--parceria);
-  font-weight: 600;
-  padding: 2px 8px;
+.card-etapa { margin: auto 0 0; padding-top: 6px; font-size: 13px; color: #a8a69f; }
+.card-etapa strong { color: var(--futuro); font-weight: 600; }
+
+.card-progresso { display: flex; align-items: center; gap: 10px; }
+.card-progresso .progresso-barra { flex: 1; background: #3d3d3a; }
+.card-progresso .progresso-barra > div { background: var(--amarelo); }
+.card-progresso span { font-size: 12px; color: #a8a69f; font-variant-numeric: tabular-nums; }
+
+.card-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  font-size: 14px;
+  font-weight: 700;
 }
-
-.card-progresso { display: flex; align-items: center; gap: 12px; }
-.card-progresso span { font-size: 12px; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
-
-.detalhes {
-  flex: none;
-  padding: 10px 18px;
-  background: var(--botao-bg);
-  color: var(--botao-fg);
-  border: 2px solid var(--botao-bg);
+.card-seta {
+  display: grid;
+  place-items: center;
+  width: 36px; height: 36px;
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  transition: background .15s, color .15s, border-color .15s;
+  background: #3a3620;
+  color: var(--amarelo);
+  font-size: 18px;
+  transition: background .15s, color .15s;
 }
-.card:hover .detalhes { background: var(--amarelo); border-color: var(--amarelo); color: var(--parceria); }
+.card:hover .card-seta { background: var(--amarelo); color: var(--parceria); }
 
 .vazio { color: var(--texto-suave); }
 
@@ -671,11 +728,8 @@ h3 {
   .topo { padding-inline: 16px; }
   main { padding: 20px 16px 48px; }
   .produto-cabecalho { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px; }
-  .card { flex-wrap: wrap; gap: 14px; padding: 16px 0; }
-  .card-imagem { width: 110px; }
-  .card-info { flex-basis: 160px; }
-  .card-modelo { font-size: 26px; }
-  .detalhes { width: 100%; }
+  .filtros { flex-wrap: nowrap; overflow-x: auto; }
+  .grade { grid-template-columns: 1fr; }
 }
 
 button:focus-visible { outline: 2px solid var(--texto); outline-offset: 2px; box-shadow: 0 0 0 5px var(--amarelo); }

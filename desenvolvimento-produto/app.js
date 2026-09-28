@@ -140,32 +140,71 @@ function etapaAtual(lista) {
   return p >= 0 ? ETAPAS[p] : 'Finalizado';
 }
 
+let filtroLinha = 'todos';
+
+function renderFiltros() {
+  const filtros = document.getElementById('filtros');
+  const opcoes = [
+    { id: 'todos', nome: 'Todos', total: PRODUTOS.length },
+    ...LINHAS.map((l) => ({ ...l, total: PRODUTOS.filter((p) => p.linha === l.id).length })),
+  ];
+  filtros.innerHTML = opcoes.map((o) => `
+    <button class="filtro ${o.id === filtroLinha ? 'ativo' : ''}" data-linha="${o.id}" aria-pressed="${o.id === filtroLinha}">
+      ${o.nome} <span>${o.total}</span>
+    </button>`).join('');
+  filtros.querySelectorAll('.filtro').forEach((b) => {
+    b.addEventListener('click', () => {
+      filtroLinha = b.dataset.linha;
+      renderPortfolio();
+    });
+  });
+}
+
+function cardProduto(produto, numero) {
+  const lista = statusDoProduto(produto.id);
+  const pct = progresso(lista);
+  const linha = LINHAS.find((l) => l.id === produto.linha);
+
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.tabIndex = 0;
+  card.innerHTML = `
+    <div class="card-imagem">
+      ${desenhoSVG(produto)}
+      <span class="card-numero">${String(numero).padStart(2, '0')}</span>
+    </div>
+    <div class="card-info">
+      <p class="card-linha">${linha.nome}</p>
+      <p class="card-modelo">${produto.nome}</p>
+      <p class="card-etapa">Etapa atual: <strong>${etapaAtual(lista)}</strong></p>
+      <div class="card-progresso">
+        <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
+        <span>${pct}%</span>
+      </div>
+      <div class="card-rodape">
+        <span>Acessar etapas</span>
+        <span class="card-seta" aria-hidden="true">&rarr;</span>
+      </div>
+    </div>`;
+  const abrir = () => { location.hash = produto.id; };
+  card.addEventListener('click', abrir);
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); }
+  });
+  return card;
+}
+
 function renderPortfolio() {
+  renderFiltros();
   const grade = document.getElementById('produtos');
   grade.innerHTML = '';
 
-  PRODUTOS.forEach((produto) => {
-    const lista = statusDoProduto(produto.id);
-    const pct = progresso(lista);
-
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="card-imagem">${desenhoSVG(produto)}</div>
-      <div class="card-info">
-        <p class="card-modelo">${produto.nome}</p>
-        <p class="card-etapa"><span>Etapa atual</span> <strong>${etapaAtual(lista)}</strong></p>
-        <div class="card-progresso">
-          <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
-          <span>${pct}%</span>
-        </div>
-      </div>
-      <button class="detalhes">Ver detalhes &rarr;</button>`;
-    card.addEventListener('click', () => {
-      location.hash = produto.id;
-    });
-    grade.appendChild(card);
-  });
+  // Ordena pela ordem das linhas para que os produtos de uma mesma linha fiquem juntos.
+  const ordem = (p) => LINHAS.findIndex((l) => l.id === p.linha);
+  PRODUTOS
+    .filter((p) => filtroLinha === 'todos' || p.linha === filtroLinha)
+    .sort((x, y) => ordem(x) - ordem(y))
+    .forEach((produto, n) => grade.appendChild(cardProduto(produto, n + 1)));
 }
 
 // ---------- Tela 2: etapas do produto ----------
