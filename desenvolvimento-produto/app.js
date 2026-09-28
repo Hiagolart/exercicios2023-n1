@@ -1,6 +1,5 @@
 const CHAVE_STORAGE = 'desenvolvimento-produto:etapas';
 
-let classeAtiva = CLASSES[0];
 let produtoAtual = null;
 
 // ---------- Persistência (localStorage) ----------
@@ -30,43 +29,50 @@ function salvarStatus(id, lista) {
   }
 }
 
-// ---------- Ilustração da empilhadeira ----------
+// ---------- Ilustrações ----------
 
-function empilhadeiraSVG(cor) {
-  return `
-    <svg viewBox="0 0 120 80" aria-hidden="true">
-      <rect x="18" y="4" width="4" height="62" fill="var(--metal-escuro)"/>
-      <rect x="24" y="4" width="4" height="62" fill="var(--metal-claro)"/>
-      <rect x="2" y="64" width="30" height="3" fill="var(--metal-escuro)"/>
-      <rect x="2" y="50" width="26" height="3" fill="var(--metal-escuro)"/>
-      <path d="M40 22 L70 22 L78 42 L40 42 Z" fill="none" stroke="var(--metal-escuro)" stroke-width="3"/>
-      <rect x="54" y="30" width="10" height="8" rx="2" fill="#222"/>
-      <path d="M32 42 H100 a6 6 0 0 1 6 6 V62 H32 Z" fill="${cor}"/>
-      <rect x="88" y="34" width="16" height="10" rx="2" fill="${cor}"/>
-      <circle cx="46" cy="64" r="10" fill="#222"/>
-      <circle cx="46" cy="64" r="4" fill="#999"/>
-      <circle cx="92" cy="65" r="9" fill="#222"/>
-      <circle cx="92" cy="65" r="3.5" fill="#999"/>
-    </svg>`;
+const ROSCA = (x, y, r) => `
+  <circle cx="${x}" cy="${y}" r="${r}" fill="#222"/>
+  <circle cx="${x}" cy="${y}" r="${r * 0.4}" fill="#999"/>`;
+
+const DESENHOS = {
+  // Empilhadeira retrátil: mastro alto, braços estabilizadores e operador em pé.
+  retratil: (cor) => `
+    <rect x="30" y="2" width="4" height="66" fill="var(--metal-escuro)"/>
+    <rect x="36" y="2" width="4" height="66" fill="var(--metal-claro)"/>
+    <rect x="10" y="60" width="26" height="3" fill="var(--metal-escuro)"/>
+    <rect x="6" y="70" width="44" height="4" rx="2" fill="var(--metal-escuro)"/>
+    <path d="M58 20 H82 V40 H58 Z" fill="none" stroke="var(--metal-escuro)" stroke-width="3"/>
+    <path d="M44 40 H96 a6 6 0 0 1 6 6 V68 H44 Z" fill="${cor}"/>
+    <rect x="62" y="44" width="16" height="4" rx="1" fill="#222"/>
+    ${ROSCA(14, 72, 5)}${ROSCA(88, 70, 8)}`,
+
+  // Empilhadeira 3 rodas: compacta, com uma única roda traseira.
+  'tres-rodas': (cor) => `
+    <rect x="20" y="6" width="4" height="60" fill="var(--metal-escuro)"/>
+    <rect x="26" y="6" width="4" height="60" fill="var(--metal-claro)"/>
+    <rect x="4" y="64" width="30" height="3" fill="var(--metal-escuro)"/>
+    <path d="M42 24 L68 24 L76 42 L42 42 Z" fill="none" stroke="var(--metal-escuro)" stroke-width="3"/>
+    <rect x="54" y="32" width="10" height="7" rx="2" fill="#222"/>
+    <path d="M34 42 H90 a10 10 0 0 1 10 10 V62 H34 Z" fill="${cor}"/>
+    ${ROSCA(48, 64, 10)}${ROSCA(88, 67, 6)}`,
+
+  // Plataforma articulada: chassi com lança em duas seções e cesto.
+  plataforma: (cor) => `
+    <path d="M40 58 L60 40 L42 22" fill="none" stroke="${cor}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M42 22 L86 10" fill="none" stroke="${cor}" stroke-width="4"/>
+    <rect x="86" y="4" width="22" height="12" rx="1" fill="none" stroke="var(--metal-escuro)" stroke-width="2.5"/>
+    <rect x="86" y="10" width="22" height="7" fill="var(--metal-claro)"/>
+    <rect x="30" y="52" width="24" height="10" rx="2" fill="var(--metal-escuro)"/>
+    <rect x="16" y="60" width="76" height="8" rx="2" fill="${cor}"/>
+    ${ROSCA(28, 70, 7)}${ROSCA(80, 70, 7)}`,
+};
+
+function desenhoSVG(produto) {
+  return `<svg viewBox="0 0 120 80" aria-hidden="true">${DESENHOS[produto.tipo](produto.cor)}</svg>`;
 }
 
 // ---------- Tela 1: portfólio ----------
-
-function renderAbas() {
-  const abas = document.getElementById('abas');
-  abas.innerHTML = '';
-  CLASSES.forEach((classe) => {
-    const botao = document.createElement('button');
-    botao.textContent = classe;
-    botao.className = classe === classeAtiva ? 'ativa' : '';
-    botao.addEventListener('click', () => {
-      classeAtiva = classe;
-      renderAbas();
-      renderLinhas();
-    });
-    abas.appendChild(botao);
-  });
-}
 
 function progresso(lista) {
   const feitas = lista.filter((s) => s === 'concluida').length;
@@ -80,55 +86,34 @@ function etapaAtual(lista) {
   return p >= 0 ? ETAPAS[p] : 'Finalizado';
 }
 
-function renderLinhas() {
-  const container = document.getElementById('linhas');
-  container.innerHTML = '';
+function renderPortfolio() {
+  const grade = document.getElementById('produtos');
+  grade.innerHTML = '';
 
-  const linhas = LINHAS.filter((l) => l.classe === classeAtiva);
-  if (!linhas.length) {
-    container.innerHTML = '<p class="vazio">Nenhum produto cadastrado nesta classe.</p>';
-    return;
-  }
+  PRODUTOS.forEach((produto) => {
+    const lista = statusDoProduto(produto.id);
+    const pct = progresso(lista);
 
-  linhas.forEach((linha) => {
-    const secao = document.createElement('section');
-    secao.innerHTML = `<h2 class="rotulo-linha">Linha: ${linha.nome}</h2>`;
-
-    const grade = document.createElement('div');
-    grade.className = 'grade';
-
-    PRODUTOS.filter((p) => p.linha === linha.id).forEach((produto) => {
-      const lista = statusDoProduto(produto.id);
-      const pct = progresso(lista);
-
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-imagem">${empilhadeiraSVG(linha.cor)}</div>
-        <p class="card-modelo">${produto.modelo}</p>
-        <p class="capacidade"><span class="icone-info">i</span> Capacidade: <strong>${produto.capacidade}</strong></p>
-        <p class="card-etapa" title="${etapaAtual(lista)}">${etapaAtual(lista)}</p>
-        <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
-        <button class="detalhes">Ver Detalhes &rarr;</button>`;
-      card.addEventListener('click', () => {
-        location.hash = produto.id;
-      });
-      grade.appendChild(card);
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-imagem">${desenhoSVG(produto)}</div>
+      <p class="card-modelo">${produto.nome}</p>
+      <p class="card-etapa" title="${etapaAtual(lista)}">${etapaAtual(lista)}</p>
+      <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
+      <button class="detalhes">Ver Detalhes &rarr;</button>`;
+    card.addEventListener('click', () => {
+      location.hash = produto.id;
     });
-
-    secao.appendChild(grade);
-    container.appendChild(secao);
+    grade.appendChild(card);
   });
 }
 
 // ---------- Tela 2: etapas do produto ----------
 
 function renderProduto(produto) {
-  const linha = LINHAS.find((l) => l.id === produto.linha);
-  document.getElementById('produto-imagem').innerHTML = empilhadeiraSVG(linha.cor);
-  document.getElementById('produto-linha').textContent = `${linha.classe} · Linha ${linha.nome}`;
-  document.getElementById('produto-modelo').textContent = produto.modelo;
-  document.getElementById('produto-capacidade').textContent = `Capacidade: ${produto.capacidade}`;
+  document.getElementById('produto-imagem').innerHTML = desenhoSVG(produto);
+  document.getElementById('produto-nome').textContent = produto.nome;
   renderFluxo();
 }
 
@@ -195,12 +180,10 @@ function rotear() {
 
   if (produto) {
     produtoAtual = produto;
-    classeAtiva = LINHAS.find((l) => l.id === produto.linha).classe;
     renderProduto(produto);
   } else {
     produtoAtual = null;
-    renderAbas();
-    renderLinhas();
+    renderPortfolio();
   }
   window.scrollTo(0, 0);
 }
