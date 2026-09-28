@@ -234,18 +234,22 @@ function renderPainel() {
   const i = etapaSelecionada;
   const lista = statusDoProduto(produtoAtual.id);
   painel.hidden = false;
+  const palavras = ETAPAS[i].split(' ');
+  const ultima = palavras.pop();
   painel.innerHTML = `
     <div class="painel-topo">
-      <h3>${ETAPAS[i]}</h3>
+      <h3>${palavras.join(' ')} <span class="destaque">${ultima}</span></h3>
       <button class="fechar" id="fechar-painel" aria-label="Fechar">&times;</button>
     </div>
-    <div class="situacoes" role="group" aria-label="Situação da etapa">
-      ${Object.entries(STATUS).map(([chave, { rotulo }]) => `
-        <button class="situacao ${lista[i] === chave ? 'ativa' : ''}" data-status="${chave}">
-          <span class="amostra ${chave}"></span>${rotulo}
-        </button>`).join('')}
-    </div>
-    <div id="conteudo-etapa"></div>`;
+    <div class="painel-corpo">
+      <div class="situacoes" role="group" aria-label="Situação da etapa">
+        ${Object.entries(STATUS).map(([chave, { rotulo }]) => `
+          <button class="situacao ${lista[i] === chave ? 'ativa' : ''}" data-status="${chave}">
+            <span class="amostra ${chave}"></span>${rotulo}
+          </button>`).join('')}
+      </div>
+      <div id="conteudo-etapa" class="cartao-interno"></div>
+    </div>`;
 
   painel.querySelector('#fechar-painel').addEventListener('click', () => {
     etapaSelecionada = null;
@@ -275,26 +279,25 @@ function renderTabelaPrecos(container) {
     <div class="tabela-rolagem">
       <table class="tabela-precos">
         <thead>
-          <tr><th>Concorrente</th><th class="num">Preço</th><th></th></tr>
+          <tr><th>Concorrente</th><th class="col-preco" colspan="2">Preço</th></tr>
         </thead>
         <tbody>
           ${linhas.map((l, n) => `
-            <tr>
+            <tr class="${!l.concorrente && l.preco == null ? 'vazia' : ''}">
               <td><input id="conc-${n}" data-linha="${n}" data-campo="concorrente" value="${(l.concorrente || '').replace(/"/g, '&quot;')}" placeholder="Nome do concorrente" aria-label="Concorrente"></td>
-              <td class="num"><input id="preco-${n}" data-linha="${n}" data-campo="preco" inputmode="decimal" value="${formatarPreco(l.preco)}" placeholder="R$ 0,00" aria-label="Preço"></td>
+              <td class="col-preco"><input id="preco-${n}" data-linha="${n}" data-campo="preco" inputmode="decimal" value="${formatarPreco(l.preco)}" placeholder="R$ 0,00" aria-label="Preço"></td>
               <td><button class="remover" data-linha="${n}" aria-label="Remover linha" title="Remover linha">&times;</button></td>
             </tr>`).join('')}
         </tbody>
         <tfoot>
           <tr>
             <th>Média geral</th>
-            <td class="num" id="media-preco">${formatarPreco(media(linhas.map((l) => l.preco))) || '—'}</td>
-            <td></td>
+            <td class="col-preco" id="media-preco" colspan="2">${formatarPreco(media(linhas.map((l) => l.preco))) || '—'}</td>
           </tr>
         </tfoot>
       </table>
     </div>
-    <button class="adicionar" id="adicionar-linha">+ Adicionar concorrente</button>`;
+    <button class="adicionar" id="adicionar-linha"><b aria-hidden="true">+</b> Adicionar concorrente</button>`;
 
   const atualizarMedias = () => {
     container.querySelector('#media-preco').textContent = formatarPreco(media(linhas.map((l) => l.preco))) || '—';
@@ -304,6 +307,7 @@ function renderTabelaPrecos(container) {
     const { linha, campo } = input.dataset;
     input.addEventListener('input', () => {
       linhas[linha][campo] = campo === 'concorrente' ? input.value : lerPreco(input.value);
+      input.closest('tr').classList.toggle('vazia', !linhas[linha].concorrente && linhas[linha].preco == null);
       salvarPrecos(produtoAtual.id, linhas);
       atualizarMedias();
     });
