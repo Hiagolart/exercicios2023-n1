@@ -196,15 +196,26 @@ function cardProduto(produto, numero) {
 
 function renderPortfolio() {
   renderFiltros();
-  const grade = document.getElementById('produtos');
-  grade.innerHTML = '';
+  const container = document.getElementById('produtos');
+  container.innerHTML = '';
 
-  // Ordena pela ordem das linhas para que os produtos de uma mesma linha fiquem juntos.
-  const ordem = (p) => LINHAS.findIndex((l) => l.id === p.linha);
-  PRODUTOS
-    .filter((p) => filtroLinha === 'todos' || p.linha === filtroLinha)
-    .sort((x, y) => ordem(x) - ordem(y))
-    .forEach((produto, n) => grade.appendChild(cardProduto(produto, n + 1)));
+  // Cada linha de produto é uma seção, uma embaixo da outra; os cards ficam lado a lado.
+  const linhas = filtroLinha === 'todos' ? LINHAS : LINHAS.filter((l) => l.id === filtroLinha);
+  let numero = 0;
+  linhas.forEach((linha) => {
+    const produtos = PRODUTOS.filter((p) => p.linha === linha.id);
+    if (!produtos.length) return;
+
+    const secao = document.createElement('section');
+    secao.className = 'linha-secao';
+    secao.innerHTML = `
+      <h3 class="linha-titulo">${linha.nome} <span>${produtos.length} ${produtos.length === 1 ? 'produto' : 'produtos'}</span></h3>`;
+    const grade = document.createElement('div');
+    grade.className = 'grade';
+    produtos.forEach((produto) => grade.appendChild(cardProduto(produto, ++numero)));
+    secao.appendChild(grade);
+    container.appendChild(secao);
+  });
 }
 
 // ---------- Tela 2: etapas do produto ----------

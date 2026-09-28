@@ -198,6 +198,26 @@ main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
 
 /* ---------- Cards de produtos ---------- */
 
+.linhas { display: flex; flex-direction: column; gap: 40px; }
+.linha-titulo {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--texto);
+  font-size: 30px;
+}
+.linha-titulo span {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: none;
+  color: var(--texto-suave);
+}
+
 .grade {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
