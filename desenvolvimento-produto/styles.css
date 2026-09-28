@@ -308,7 +308,7 @@ h3 { margin: 0; }
 #conteudo-etapa h4 { margin: 4px 0 10px; font-size: 14px; }
 
 .tabela-rolagem { overflow-x: auto; }
-.tabela-precos { width: 100%; max-width: 720px; border-collapse: collapse; font-size: 14px; }
+.tabela-precos { width: 100%; max-width: 560px; border-collapse: collapse; font-size: 14px; }
 .tabela-precos th {
   text-align: left;
   font-size: 12px;

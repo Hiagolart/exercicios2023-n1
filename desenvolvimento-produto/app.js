@@ -42,7 +42,7 @@ function lerTodosPrecos() {
 
 function precosDoProduto(id) {
   const salvo = lerTodosPrecos()[id];
-  return Array.isArray(salvo) && salvo.length ? salvo : [{ concorrente: '', preco: null, precoMedio: null }];
+  return Array.isArray(salvo) && salvo.length ? salvo : [{ concorrente: '', preco: null }];
 }
 
 function salvarPrecos(id, linhas) {
@@ -245,14 +245,13 @@ function renderTabelaPrecos(container) {
     <div class="tabela-rolagem">
       <table class="tabela-precos">
         <thead>
-          <tr><th>Concorrente</th><th class="num">Preço</th><th class="num">Preço médio</th><th></th></tr>
+          <tr><th>Concorrente</th><th class="num">Preço</th><th></th></tr>
         </thead>
         <tbody>
           ${linhas.map((l, n) => `
             <tr>
               <td><input id="conc-${n}" data-linha="${n}" data-campo="concorrente" value="${(l.concorrente || '').replace(/"/g, '&quot;')}" placeholder="Nome do concorrente" aria-label="Concorrente"></td>
               <td class="num"><input id="preco-${n}" data-linha="${n}" data-campo="preco" inputmode="decimal" value="${formatarPreco(l.preco)}" placeholder="R$ 0,00" aria-label="Preço"></td>
-              <td class="num"><input id="medio-${n}" data-linha="${n}" data-campo="precoMedio" inputmode="decimal" value="${formatarPreco(l.precoMedio)}" placeholder="R$ 0,00" aria-label="Preço médio"></td>
               <td><button class="remover" data-linha="${n}" aria-label="Remover linha" title="Remover linha">&times;</button></td>
             </tr>`).join('')}
         </tbody>
@@ -260,7 +259,6 @@ function renderTabelaPrecos(container) {
           <tr>
             <th>Média geral</th>
             <td class="num" id="media-preco">${formatarPreco(media(linhas.map((l) => l.preco))) || '—'}</td>
-            <td class="num" id="media-medio">${formatarPreco(media(linhas.map((l) => l.precoMedio))) || '—'}</td>
             <td></td>
           </tr>
         </tfoot>
@@ -270,7 +268,6 @@ function renderTabelaPrecos(container) {
 
   const atualizarMedias = () => {
     container.querySelector('#media-preco').textContent = formatarPreco(media(linhas.map((l) => l.preco))) || '—';
-    container.querySelector('#media-medio').textContent = formatarPreco(media(linhas.map((l) => l.precoMedio))) || '—';
   };
 
   container.querySelectorAll('input').forEach((input) => {
@@ -296,7 +293,7 @@ function renderTabelaPrecos(container) {
   });
 
   container.querySelector('#adicionar-linha').addEventListener('click', () => {
-    linhas.push({ concorrente: '', preco: null, precoMedio: null });
+    linhas.push({ concorrente: '', preco: null });
     salvarPrecos(produtoAtual.id, linhas);
     renderTabelaPrecos(container);
     container.querySelector(`#conc-${linhas.length - 1}`).focus();
