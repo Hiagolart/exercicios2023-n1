@@ -125,6 +125,9 @@ const DESENHOS = {
 };
 
 function desenhoSVG(produto) {
+  if (produto.foto) {
+    return `<img src="${produto.foto}" alt="${produto.nome}" loading="lazy"${produto.clarearFoto ? ' class="clarear"' : ''}>`;
+  }
   return `<svg viewBox="0 0 120 80" aria-hidden="true">${DESENHOS[produto.tipo](produto.cor)}</svg>`;
 }
 
