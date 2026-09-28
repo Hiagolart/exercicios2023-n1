@@ -5,15 +5,14 @@
 const LINHAS = [
   { id: 'empilhadeira', nome: 'Empilhadeira' },
   { id: 'plataforma', nome: 'Plataforma elevatória articulada' },
-  { id: 'tres-rodas', nome: 'Empilhadeira 3 rodas' },
 ];
 
 // linha: id de uma das LINHAS acima.
 // tipo define a ilustração usada: 'retratil', 'tres-rodas' ou 'plataforma'.
 const PRODUTOS = [
   { id: 'retratil', linha: 'empilhadeira', nome: 'Empilhadeira retrátil', tipo: 'retratil', cor: 'var(--amarelo)' },
+  { id: 'tres-rodas', linha: 'empilhadeira', nome: 'Empilhadeira 3 rodas', tipo: 'tres-rodas', cor: 'var(--amarelo)' },
   { id: 'plataforma', linha: 'plataforma', nome: 'Plataforma articulada', tipo: 'plataforma', cor: 'var(--amarelo)' },
-  { id: 'tres-rodas', linha: 'tres-rodas', nome: 'Empilhadeira 3 rodas', tipo: 'tres-rodas', cor: 'var(--amarelo)' },
 ];
 
 // Etapas do processo de desenvolvimento de produto (na ordem do fluxo).
