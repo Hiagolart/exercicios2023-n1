@@ -35,11 +35,11 @@ function salvarStatus(id, lista) {
 function empilhadeiraSVG(cor) {
   return `
     <svg viewBox="0 0 120 80" aria-hidden="true">
-      <rect x="18" y="4" width="4" height="62" fill="#333"/>
-      <rect x="24" y="4" width="4" height="62" fill="#555"/>
-      <rect x="2" y="64" width="30" height="3" fill="#333"/>
-      <rect x="2" y="50" width="26" height="3" fill="#444"/>
-      <path d="M40 22 L70 22 L78 42 L40 42 Z" fill="none" stroke="#333" stroke-width="3"/>
+      <rect x="18" y="4" width="4" height="62" fill="var(--metal-escuro)"/>
+      <rect x="24" y="4" width="4" height="62" fill="var(--metal-claro)"/>
+      <rect x="2" y="64" width="30" height="3" fill="var(--metal-escuro)"/>
+      <rect x="2" y="50" width="26" height="3" fill="var(--metal-escuro)"/>
+      <path d="M40 22 L70 22 L78 42 L40 42 Z" fill="none" stroke="var(--metal-escuro)" stroke-width="3"/>
       <rect x="54" y="30" width="10" height="8" rx="2" fill="#222"/>
       <path d="M32 42 H100 a6 6 0 0 1 6 6 V62 H32 Z" fill="${cor}"/>
       <rect x="88" y="34" width="16" height="10" rx="2" fill="${cor}"/>
@@ -113,7 +113,7 @@ function renderLinhas() {
         <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
         <button class="detalhes">Ver Detalhes &rarr;</button>`;
       card.addEventListener('click', () => {
-        location.hash = `#/produto/${produto.id}`;
+        location.hash = produto.id;
       });
       grade.appendChild(card);
     });
@@ -189,7 +189,7 @@ function fecharMenu() {
 
 function rotear() {
   fecharMenu();
-  const match = location.hash.match(/^#\/produto\/(.+)$/);
+  const match = location.hash.match(/^#(.+)$/);
   const produto = match && PRODUTOS.find((p) => p.id === decodeURIComponent(match[1]));
 
   document.getElementById('tela-portfolio').hidden = !!produto;

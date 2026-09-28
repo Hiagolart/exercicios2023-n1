@@ -9,7 +9,54 @@
   --cinza: #7f7f7f;
   --vermelho: #e02020;
   --seta: #cfd6ea;
+  --abas: #ececec;
+  --abas-hover: #e0e0e0;
+  --abas-texto: #444;
+  --rotulo: #999;
+  --linha-forte: #ccc;
+  --trilho: #e6e6e6;
+  --contorno-etapa: #fff;
+  --metal-escuro: #333;
+  --metal-claro: #555;
+  color-scheme: light;
 }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --fundo: #15171c;
+  --superficie: #1f2229;
+  --borda: #30343d;
+  --texto: #e8eaee;
+  --texto-suave: #9aa0ab;
+  --seta: #2b3550;
+  --abas: #262a32;
+  --abas-hover: #30343d;
+  --abas-texto: #c9cdd4;
+  --rotulo: #8a909b;
+  --linha-forte: #454a55;
+  --trilho: #30343d;
+  --contorno-etapa: #1f2229;
+  --metal-escuro: #aab0bb;
+  --metal-claro: #7d838e;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --fundo: #15171c;
+  --superficie: #1f2229;
+  --borda: #30343d;
+  --texto: #e8eaee;
+  --texto-suave: #9aa0ab;
+  --seta: #2b3550;
+  --abas: #262a32;
+  --abas-hover: #30343d;
+  --abas-texto: #c9cdd4;
+  --rotulo: #8a909b;
+  --linha-forte: #454a55;
+  --trilho: #30343d;
+  --contorno-etapa: #1f2229;
+  --metal-escuro: #aab0bb;
+  --metal-claro: #7d838e;
+  color-scheme: dark;
+}
+
 
 * { box-sizing: border-box; }
 
@@ -20,7 +67,7 @@ body {
   color: var(--texto);
 }
 
-button { font: inherit; cursor: pointer; }
+button { font: inherit; color: inherit; cursor: pointer; }
 
 .topo {
   background: var(--superficie);
@@ -38,7 +85,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; }
   display: flex;
   gap: 4px;
   overflow-x: auto;
-  background: #ececec;
+  background: var(--abas);
   padding: 6px;
   border-radius: 6px;
   margin-bottom: 20px;
@@ -50,18 +97,18 @@ main { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; }
   border-radius: 4px;
   font-weight: 600;
   font-size: 13px;
-  color: #444;
+  color: var(--abas-texto);
   white-space: nowrap;
 }
-.abas button.ativa { background: var(--superficie); border-color: #cfcfcf; }
-.abas button:not(.ativa):hover { background: #e0e0e0; }
+.abas button.ativa { background: var(--superficie); border-color: var(--linha-forte); }
+.abas button:not(.ativa):hover { background: var(--abas-hover); }
 
 /* ---------- Grade de produtos ---------- */
 
 .rotulo-linha {
   font-size: 12px;
   font-weight: 700;
-  color: #999;
+  color: var(--rotulo);
   text-transform: uppercase;
   letter-spacing: .03em;
   margin: 18px 0 8px;
@@ -92,7 +139,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; }
   display: inline-grid;
   place-items: center;
   width: 13px; height: 13px;
-  border: 1px solid #888;
+  border: 1px solid var(--texto-suave);
   border-radius: 50%;
   font-size: 9px;
   font-weight: 700;
@@ -113,12 +160,12 @@ main { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; }
   margin-top: 10px;
   padding: 7px;
   background: var(--superficie);
-  border: 1px solid #ccc;
+  border: 1px solid var(--linha-forte);
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
 }
-.card:hover .detalhes { border-color: #999; }
+.card:hover .detalhes { border-color: var(--rotulo); }
 
 .vazio { color: var(--texto-suave); }
 
@@ -126,7 +173,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; }
 
 .progresso { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
 .progresso span { font-size: 13px; color: var(--texto-suave); }
-.progresso-barra { width: 240px; max-width: 100%; height: 8px; background: #e6e6e6; border-radius: 4px; overflow: hidden; }
+.progresso-barra { width: 240px; max-width: 100%; height: 8px; background: var(--trilho); border-radius: 4px; overflow: hidden; }
 .progresso-barra > div { height: 100%; background: var(--azul); transition: width .2s; }
 .progresso-barra.mini { height: 4px; }
 
@@ -165,6 +212,7 @@ h3 { margin: 0; }
   position: relative;
   display: flex;
   gap: 6px;
+  min-width: 1512px;
   list-style: none;
   margin: 0;
   padding: 50px 70px 50px 8px;
@@ -200,12 +248,14 @@ h3 { margin: 0; }
   width: 100%;
   height: 80px;
   padding: 6px;
-  border: 2px solid #fff;
+  border: 2px solid var(--contorno-etapa);
   border-radius: 10px;
   color: #fff;
   font-size: 11px;
   font-weight: 600;
   line-height: 1.25;
+  overflow-wrap: anywhere;
+  hyphens: auto;
   display: grid;
   place-items: center;
   text-align: center;
@@ -267,7 +317,7 @@ h3 { margin: 0; }
 
 .restaurar {
   background: var(--superficie);
-  border: 1px solid #ccc;
+  border: 1px solid var(--linha-forte);
   border-radius: 4px;
   padding: 7px 14px;
   font-size: 13px;
@@ -305,3 +355,6 @@ h3 { margin: 0; }
   .produto-cabecalho { flex-direction: column; align-items: flex-start; }
   .grade { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
+
+button:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
