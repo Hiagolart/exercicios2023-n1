@@ -37,15 +37,10 @@ const PRODUTOS = [
 
 // Etapas do processo de desenvolvimento de produto (na ordem do fluxo).
 const ETAPAS = [
-  'Desenvolvimento para novos produtos',
   'Estudo de viabilidade',
   'Pesquisa de mercado',
   'Definição de Requisitos técnicos',
-  'Pesquisar fornecedores na China',
   'Orçamento junto aos fornecedores',
-  'Cálculo de Nacionalização',
-  'Análise de especificações pela área técnica',
-  'Análise de viabilidade econômica',
   'Auditoria nas fábricas da China',
   'Solicitação de amostra de produto',
   'Visita às fábricas na China',
@@ -59,14 +54,12 @@ const STATUS = {
   concluida: { rotulo: 'Concluída' },
   andamento: { rotulo: 'Em andamento' },
   pendente: { rotulo: 'Pendente' },
-  na: { rotulo: 'Não se aplica' },
 };
 
 // Situação inicial das etapas quando um produto ainda não tem registro salvo.
-// Segue o exemplo do fluxograma: algumas etapas riscadas, "Integração com
-// Marketing" em andamento e as duas últimas pendentes.
+// Segue o exemplo do fluxograma: "Integração com Marketing" em andamento e as
+// duas últimas pendentes.
 const STATUS_PADRAO = [
-  'na', 'concluida', 'concluida', 'concluida', 'na', 'concluida', 'na', 'na',
-  'na', 'concluida', 'concluida', 'concluida', 'concluida', 'andamento',
-  'pendente', 'pendente',
+  'concluida', 'concluida', 'concluida', 'concluida', 'concluida', 'concluida',
+  'concluida', 'concluida', 'andamento', 'pendente', 'pendente',
 ];

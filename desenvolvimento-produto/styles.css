@@ -212,7 +212,7 @@ h3 { margin: 0; }
   position: relative;
   display: flex;
   gap: 6px;
-  min-width: 1512px;
+  min-width: 1062px;
   list-style: none;
   margin: 0;
   padding: 50px 70px 50px 8px;
@@ -267,20 +267,6 @@ h3 { margin: 0; }
 .etapa.andamento { background: var(--laranja); }
 .etapa.pendente { background: var(--cinza); }
 
-/* Etapa riscada (não se aplica) */
-.etapa.na::before,
-.etapa.na::after {
-  content: "";
-  position: absolute;
-  left: 50%; top: 50%;
-  width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--vermelho);
-  transform: translate(-50%, -50%) rotate(40deg);
-}
-.etapa.na::after { transform: translate(-50%, -50%) rotate(-40deg); }
-
 /* ---------- Legenda ---------- */
 
 .legenda {
@@ -304,16 +290,6 @@ h3 { margin: 0; }
 }
 .amostra.andamento { background: var(--laranja); }
 .amostra.pendente { background: var(--cinza); }
-.amostra.na::before,
-.amostra.na::after {
-  content: "";
-  position: absolute;
-  left: 50%; top: 50%;
-  width: 140%; height: 2px;
-  background: var(--vermelho);
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-.amostra.na::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
 .restaurar {
   background: var(--superficie);

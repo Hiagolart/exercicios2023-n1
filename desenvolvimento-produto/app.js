@@ -69,10 +69,8 @@ function renderAbas() {
 }
 
 function progresso(lista) {
-  const aplicaveis = lista.filter((s) => s !== 'na');
-  if (!aplicaveis.length) return 100;
-  const feitas = aplicaveis.filter((s) => s === 'concluida').length;
-  return Math.round((feitas / aplicaveis.length) * 100);
+  const feitas = lista.filter((s) => s === 'concluida').length;
+  return Math.round((feitas / lista.length) * 100);
 }
 
 function etapaAtual(lista) {
