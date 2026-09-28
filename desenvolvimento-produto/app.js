@@ -98,9 +98,14 @@ function renderPortfolio() {
     card.className = 'card';
     card.innerHTML = `
       <div class="card-imagem">${desenhoSVG(produto)}</div>
-      <p class="card-modelo">${produto.nome}</p>
-      <p class="card-etapa" title="${etapaAtual(lista)}">${etapaAtual(lista)}</p>
-      <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
+      <div class="card-info">
+        <p class="card-modelo">${produto.nome}</p>
+        <p class="card-etapa">Etapa atual: <strong>${etapaAtual(lista)}</strong></p>
+        <div class="card-progresso">
+          <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
+          <span>${pct}%</span>
+        </div>
+      </div>
       <button class="detalhes">Ver Detalhes &rarr;</button>`;
     card.addEventListener('click', () => {
       location.hash = produto.id;
