@@ -86,8 +86,8 @@ function salvarRequisitos(id, grade) {
 // ---------- Ilustrações ----------
 
 const ROSCA = (x, y, r) => `
-  <circle cx="${x}" cy="${y}" r="${r}" fill="#222"/>
-  <circle cx="${x}" cy="${y}" r="${r * 0.4}" fill="#999"/>`;
+  <circle cx="${x}" cy="${y}" r="${r}" fill="var(--pneu)"/>
+  <circle cx="${x}" cy="${y}" r="${r * 0.4}" fill="var(--aro)"/>`;
 
 const DESENHOS = {
   // Empilhadeira retrátil: mastro alto, braços estabilizadores e operador em pé.
@@ -98,7 +98,7 @@ const DESENHOS = {
     <rect x="6" y="70" width="44" height="4" rx="2" fill="var(--metal-escuro)"/>
     <path d="M58 20 H82 V40 H58 Z" fill="none" stroke="var(--metal-escuro)" stroke-width="3"/>
     <path d="M44 40 H96 a6 6 0 0 1 6 6 V68 H44 Z" fill="${cor}"/>
-    <rect x="62" y="44" width="16" height="4" rx="1" fill="#222"/>
+    <rect x="62" y="44" width="16" height="4" rx="1" fill="var(--pneu)"/>
     ${ROSCA(14, 72, 5)}${ROSCA(88, 70, 8)}`,
 
   // Empilhadeira 3 rodas: compacta, com uma única roda traseira.
@@ -107,7 +107,7 @@ const DESENHOS = {
     <rect x="26" y="6" width="4" height="60" fill="var(--metal-claro)"/>
     <rect x="4" y="64" width="30" height="3" fill="var(--metal-escuro)"/>
     <path d="M42 24 L68 24 L76 42 L42 42 Z" fill="none" stroke="var(--metal-escuro)" stroke-width="3"/>
-    <rect x="54" y="32" width="10" height="7" rx="2" fill="#222"/>
+    <rect x="54" y="32" width="10" height="7" rx="2" fill="var(--pneu)"/>
     <path d="M34 42 H90 a10 10 0 0 1 10 10 V62 H34 Z" fill="${cor}"/>
     ${ROSCA(48, 64, 10)}${ROSCA(88, 67, 6)}`,
 
@@ -154,13 +154,13 @@ function renderPortfolio() {
       <div class="card-imagem">${desenhoSVG(produto)}</div>
       <div class="card-info">
         <p class="card-modelo">${produto.nome}</p>
-        <p class="card-etapa">Etapa atual: <strong>${etapaAtual(lista)}</strong></p>
+        <p class="card-etapa"><span>Etapa atual</span> <strong>${etapaAtual(lista)}</strong></p>
         <div class="card-progresso">
           <div class="progresso-barra mini"><div style="width:${pct}%"></div></div>
           <span>${pct}%</span>
         </div>
       </div>
-      <button class="detalhes">Ver Detalhes &rarr;</button>`;
+      <button class="detalhes">Ver detalhes &rarr;</button>`;
     card.addEventListener('click', () => {
       location.hash = produto.id;
     });
@@ -189,7 +189,7 @@ function renderFluxo() {
     const botao = document.createElement('button');
     botao.className = `etapa ${lista[i]}`;
     botao.title = `${nome} — ${STATUS[lista[i]].rotulo}`;
-    botao.innerHTML = `<span>${nome}</span>`;
+    botao.innerHTML = `<small>${String(i + 1).padStart(2, '0')}</small><span>${nome}</span>`;
     if (i === etapaSelecionada) botao.classList.add('selecionada');
     botao.setAttribute('aria-pressed', i === etapaSelecionada);
     botao.addEventListener('click', () => {

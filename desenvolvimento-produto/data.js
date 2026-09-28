@@ -3,9 +3,9 @@
 
 // tipo define a ilustração usada: 'retratil', 'tres-rodas' ou 'plataforma'.
 const PRODUTOS = [
-  { id: 'retratil', nome: 'Empilhadeira retrátil', tipo: 'retratil', cor: '#f5a623' },
-  { id: 'tres-rodas', nome: 'Empilhadeira 3 rodas', tipo: 'tres-rodas', cor: '#2fb35a' },
-  { id: 'plataforma', nome: 'Plataforma articulada', tipo: 'plataforma', cor: '#3b7dd8' },
+  { id: 'retratil', nome: 'Empilhadeira retrátil', tipo: 'retratil', cor: 'var(--amarelo)' },
+  { id: 'tres-rodas', nome: 'Empilhadeira 3 rodas', tipo: 'tres-rodas', cor: 'var(--amarelo)' },
+  { id: 'plataforma', nome: 'Plataforma articulada', tipo: 'plataforma', cor: 'var(--amarelo)' },
 ];
 
 // Etapas do processo de desenvolvimento de produto (na ordem do fluxo).
