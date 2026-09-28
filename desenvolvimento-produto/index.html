@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desenvolvimento de Produto</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topo">
+    <h1>Desenvolvimento de Produto</h1>
+  </header>
+
+  <!-- Tela 1: portfólio -->
+  <main id="tela-portfolio">
+    <nav class="abas" id="abas"></nav>
+    <section id="linhas"></section>
+  </main>
+
+  <!-- Tela 2: etapas de desenvolvimento do produto -->
+  <main id="tela-produto" hidden>
+    <button class="voltar" id="voltar">&larr; Voltar ao portfólio</button>
+
+    <div class="produto-cabecalho">
+      <div class="produto-imagem" id="produto-imagem"></div>
+      <div>
+        <p class="rotulo-linha" id="produto-linha"></p>
+        <h2 id="produto-modelo"></h2>
+        <p class="capacidade" id="produto-capacidade"></p>
+        <div class="progresso">
+          <div class="progresso-barra"><div id="progresso-preenchido"></div></div>
+          <span id="progresso-texto"></span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Etapas de desenvolvimento</h3>
+    <p class="dica">Clique em uma etapa para alterar a situação.</p>
+
+    <div class="fluxo-rolagem">
+      <ol class="fluxo" id="fluxo"></ol>
+    </div>
+
+    <ul class="legenda">
+      <li><span class="amostra concluida"></span>Concluída</li>
+      <li><span class="amostra andamento"></span>Em andamento</li>
+      <li><span class="amostra pendente"></span>Pendente</li>
+      <li><span class="amostra na"></span>Não se aplica</li>
+    </ul>
+
+    <button class="restaurar" id="restaurar">Restaurar situação padrão</button>
+  </main>
+
+  <!-- Menu para escolher a situação da etapa -->
+  <div class="menu-status" id="menu-status" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
