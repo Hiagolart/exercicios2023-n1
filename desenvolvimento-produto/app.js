@@ -20,6 +20,8 @@ function lerTodosStatus() {
 function statusDoProduto(id) {
   const salvo = lerTodosStatus()[id];
   if (Array.isArray(salvo) && salvo.length === ETAPAS.length) return salvo;
+  // Registros salvos antes da remoção da etapa "Integração Indiana" (a última) tinham uma etapa a mais.
+  if (Array.isArray(salvo) && salvo.length === ETAPAS.length + 1) return salvo.slice(0, ETAPAS.length);
   return [...STATUS_PADRAO];
 }
 

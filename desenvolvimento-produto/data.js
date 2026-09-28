@@ -27,7 +27,6 @@ const ETAPAS = [
   'Definição de Fornecedor e Produto',
   'Integração com Marketing',
   'Apresentação do produto e fornecedor',
-  'Integração Indiana',
 ];
 
 const STATUS = {
@@ -37,9 +36,9 @@ const STATUS = {
 };
 
 // Situação inicial das etapas quando um produto ainda não tem registro salvo.
-// Segue o exemplo do fluxograma: "Integração com Marketing" em andamento e as
-// duas últimas pendentes.
+// Segue o exemplo do fluxograma: "Integração com Marketing" em andamento e a
+// última pendente.
 const STATUS_PADRAO = [
   'concluida', 'concluida', 'concluida', 'concluida', 'concluida', 'concluida',
-  'concluida', 'concluida', 'andamento', 'pendente', 'pendente',
+  'concluida', 'concluida', 'andamento', 'pendente',
 ];
