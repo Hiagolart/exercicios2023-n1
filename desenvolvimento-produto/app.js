@@ -1,6 +1,9 @@
 const CHAVE_STORAGE = 'desenvolvimento-produto:etapas';
+const CHAVE_PRECOS = 'desenvolvimento-produto:precos';
+const ETAPA_PESQUISA = ETAPAS.indexOf('Pesquisa de mercado');
 
 let produtoAtual = null;
+let etapaSelecionada = null;
 
 // ---------- Persistência (localStorage) ----------
 
@@ -24,6 +27,29 @@ function salvarStatus(id, lista) {
   else delete todos[id];
   try {
     localStorage.setItem(CHAVE_STORAGE, JSON.stringify(todos));
+  } catch {
+    // Sem armazenamento disponível: as alterações valem só nesta sessão.
+  }
+}
+
+function lerTodosPrecos() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE_PRECOS)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function precosDoProduto(id) {
+  const salvo = lerTodosPrecos()[id];
+  return Array.isArray(salvo) && salvo.length ? salvo : [{ concorrente: '', preco: null, precoMedio: null }];
+}
+
+function salvarPrecos(id, linhas) {
+  const todos = lerTodosPrecos();
+  todos[id] = linhas;
+  try {
+    localStorage.setItem(CHAVE_PRECOS, JSON.stringify(todos));
   } catch {
     // Sem armazenamento disponível: as alterações valem só nesta sessão.
   }
@@ -136,47 +162,151 @@ function renderFluxo() {
     botao.className = `etapa ${lista[i]}`;
     botao.title = `${nome} — ${STATUS[lista[i]].rotulo}`;
     botao.innerHTML = `<span>${nome}</span>`;
-    botao.addEventListener('click', (e) => {
-      e.stopPropagation();
-      abrirMenu(botao, i);
+    if (i === etapaSelecionada) botao.classList.add('selecionada');
+    botao.setAttribute('aria-pressed', i === etapaSelecionada);
+    botao.addEventListener('click', () => {
+      etapaSelecionada = etapaSelecionada === i ? null : i;
+      renderFluxo();
+      renderPainel();
     });
     item.appendChild(botao);
     fluxo.appendChild(item);
   });
 }
 
-function abrirMenu(ancora, indice) {
-  const menu = document.getElementById('menu-status');
-  menu.innerHTML = `<p>${ETAPAS[indice]}</p>`;
-  Object.entries(STATUS).forEach(([chave, { rotulo }]) => {
-    const opcao = document.createElement('button');
-    opcao.innerHTML = `<span class="amostra ${chave}"></span>${rotulo}`;
-    opcao.addEventListener('click', () => {
-      const lista = statusDoProduto(produtoAtual.id);
-      lista[indice] = chave;
-      salvarStatus(produtoAtual.id, lista);
-      fecharMenu();
-      renderFluxo();
-    });
-    menu.appendChild(opcao);
-  });
+// ---------- Painel da etapa selecionada ----------
 
-  menu.hidden = false;
-  const r = ancora.getBoundingClientRect();
-  const largura = menu.offsetWidth;
-  const esquerda = Math.min(Math.max(8, r.left + r.width / 2 - largura / 2), window.innerWidth - largura - 8);
-  menu.style.left = `${esquerda + window.scrollX}px`;
-  menu.style.top = `${r.bottom + window.scrollY + 8}px`;
+const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+function formatarPreco(valor) {
+  return valor == null ? '' : moeda.format(valor);
 }
 
-function fecharMenu() {
-  document.getElementById('menu-status').hidden = true;
+// Aceita "1.234,56", "1234,56", "1234.56" ou "R$ 1.234,56".
+function lerPreco(texto) {
+  let t = texto.replace(/[^\d,.-]/g, '');
+  if (!t) return null;
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
+  else if ((t.match(/\./g) || []).length > 1 || /\.\d{3}$/.test(t)) t = t.replace(/\./g, '');
+  const n = Number(t);
+  return Number.isFinite(n) ? n : null;
+}
+
+function media(valores) {
+  const v = valores.filter((x) => x != null);
+  return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null;
+}
+
+function renderPainel() {
+  const painel = document.getElementById('painel-etapa');
+  if (etapaSelecionada == null) {
+    painel.hidden = true;
+    return;
+  }
+  const i = etapaSelecionada;
+  const lista = statusDoProduto(produtoAtual.id);
+  painel.hidden = false;
+  painel.innerHTML = `
+    <div class="painel-topo">
+      <h3>${ETAPAS[i]}</h3>
+      <button class="fechar" id="fechar-painel" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="situacoes" role="group" aria-label="Situação da etapa">
+      ${Object.entries(STATUS).map(([chave, { rotulo }]) => `
+        <button class="situacao ${lista[i] === chave ? 'ativa' : ''}" data-status="${chave}">
+          <span class="amostra ${chave}"></span>${rotulo}
+        </button>`).join('')}
+    </div>
+    <div id="conteudo-etapa"></div>`;
+
+  painel.querySelector('#fechar-painel').addEventListener('click', () => {
+    etapaSelecionada = null;
+    renderFluxo();
+    renderPainel();
+  });
+  painel.querySelectorAll('.situacao').forEach((b) => {
+    b.addEventListener('click', () => {
+      const atual = statusDoProduto(produtoAtual.id);
+      atual[i] = b.dataset.status;
+      salvarStatus(produtoAtual.id, atual);
+      renderFluxo();
+      renderPainel();
+    });
+  });
+
+  if (i === ETAPA_PESQUISA) renderTabelaPrecos(document.getElementById('conteudo-etapa'));
+}
+
+function renderTabelaPrecos(container) {
+  const linhas = precosDoProduto(produtoAtual.id);
+
+  container.innerHTML = `
+    <h4>Preços dos concorrentes</h4>
+    <div class="tabela-rolagem">
+      <table class="tabela-precos">
+        <thead>
+          <tr><th>Concorrente</th><th class="num">Preço</th><th class="num">Preço médio</th><th></th></tr>
+        </thead>
+        <tbody>
+          ${linhas.map((l, n) => `
+            <tr>
+              <td><input id="conc-${n}" data-linha="${n}" data-campo="concorrente" value="${(l.concorrente || '').replace(/"/g, '&quot;')}" placeholder="Nome do concorrente" aria-label="Concorrente"></td>
+              <td class="num"><input id="preco-${n}" data-linha="${n}" data-campo="preco" inputmode="decimal" value="${formatarPreco(l.preco)}" placeholder="R$ 0,00" aria-label="Preço"></td>
+              <td class="num"><input id="medio-${n}" data-linha="${n}" data-campo="precoMedio" inputmode="decimal" value="${formatarPreco(l.precoMedio)}" placeholder="R$ 0,00" aria-label="Preço médio"></td>
+              <td><button class="remover" data-linha="${n}" aria-label="Remover linha" title="Remover linha">&times;</button></td>
+            </tr>`).join('')}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Média geral</th>
+            <td class="num" id="media-preco">${formatarPreco(media(linhas.map((l) => l.preco))) || '—'}</td>
+            <td class="num" id="media-medio">${formatarPreco(media(linhas.map((l) => l.precoMedio))) || '—'}</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <button class="adicionar" id="adicionar-linha">+ Adicionar concorrente</button>`;
+
+  const atualizarMedias = () => {
+    container.querySelector('#media-preco').textContent = formatarPreco(media(linhas.map((l) => l.preco))) || '—';
+    container.querySelector('#media-medio').textContent = formatarPreco(media(linhas.map((l) => l.precoMedio))) || '—';
+  };
+
+  container.querySelectorAll('input').forEach((input) => {
+    const { linha, campo } = input.dataset;
+    input.addEventListener('input', () => {
+      linhas[linha][campo] = campo === 'concorrente' ? input.value : lerPreco(input.value);
+      salvarPrecos(produtoAtual.id, linhas);
+      atualizarMedias();
+    });
+    if (campo !== 'concorrente') {
+      input.addEventListener('blur', () => {
+        input.value = formatarPreco(linhas[linha][campo]);
+      });
+    }
+  });
+
+  container.querySelectorAll('.remover').forEach((b) => {
+    b.addEventListener('click', () => {
+      linhas.splice(Number(b.dataset.linha), 1);
+      salvarPrecos(produtoAtual.id, linhas);
+      renderTabelaPrecos(container);
+    });
+  });
+
+  container.querySelector('#adicionar-linha').addEventListener('click', () => {
+    linhas.push({ concorrente: '', preco: null, precoMedio: null });
+    salvarPrecos(produtoAtual.id, linhas);
+    renderTabelaPrecos(container);
+    container.querySelector(`#conc-${linhas.length - 1}`).focus();
+  });
 }
 
 // ---------- Navegação ----------
 
 function rotear() {
-  fecharMenu();
+  etapaSelecionada = null;
   const match = location.hash.match(/^#(.+)$/);
   const produto = match && PRODUTOS.find((p) => p.id === decodeURIComponent(match[1]));
 
@@ -186,6 +316,7 @@ function rotear() {
   if (produto) {
     produtoAtual = produto;
     renderProduto(produto);
+    renderPainel();
   } else {
     produtoAtual = null;
     renderPortfolio();
@@ -200,14 +331,9 @@ document.getElementById('voltar').addEventListener('click', () => {
 document.getElementById('restaurar').addEventListener('click', () => {
   salvarStatus(produtoAtual.id, null);
   renderFluxo();
+  renderPainel();
 });
 
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#menu-status')) fecharMenu();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') fecharMenu();
-});
 window.addEventListener('hashchange', rotear);
 
 rotear();
