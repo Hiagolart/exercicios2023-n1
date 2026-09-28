@@ -365,6 +365,68 @@ h3 { margin: 0; }
 }
 .adicionar:hover { border-style: solid; }
 
+/* ---------- Planilha (estilo Excel) ---------- */
+
+:root { --grade: #d4d8de; --cabecalho-planilha: #eef0f3; --ativo-planilha: #dde6f6; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --grade: #3a3f49; --cabecalho-planilha: #262a32; --ativo-planilha: #2b3550; }
+}
+:root[data-theme="dark"] { --grade: #3a3f49; --cabecalho-planilha: #262a32; --ativo-planilha: #2b3550; }
+
+.planilha-barra { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.ref-celula {
+  min-width: 56px;
+  padding: 5px 8px;
+  border: 1px solid var(--grade);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  margin-right: 6px;
+}
+.planilha-acao {
+  padding: 5px 10px;
+  border: 1px solid var(--linha-forte);
+  border-radius: 4px;
+  background: var(--superficie);
+  font-size: 12px;
+  font-weight: 600;
+}
+.planilha-acao:hover:not(:disabled) { border-color: var(--azul); color: var(--azul); }
+.planilha-acao:disabled { opacity: .4; cursor: default; }
+
+.planilha-rolagem { overflow: auto; max-height: 480px; border: 1px solid var(--grade); border-radius: 4px; }
+.planilha { border-collapse: collapse; font-size: 13px; }
+.planilha th {
+  position: sticky;
+  background: var(--cabecalho-planilha);
+  color: var(--texto-suave);
+  font-weight: 600;
+  font-size: 12px;
+  border: 1px solid var(--grade);
+  padding: 4px 6px;
+  z-index: 1;
+}
+.planilha thead th { top: 0; min-width: 150px; }
+.planilha tbody th { left: 0; min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; }
+.planilha thead th.canto { left: 0; min-width: 40px; z-index: 2; }
+.planilha th.ativo { background: var(--ativo-planilha); color: var(--texto); }
+.planilha td { border: 1px solid var(--grade); padding: 0; background: var(--superficie); }
+.planilha tbody tr:first-child td input { font-weight: 700; }
+.planilha input {
+  display: block;
+  width: 100%;
+  min-width: 150px;
+  font: inherit;
+  color: var(--texto);
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+}
+.planilha input:focus { outline: 2px solid var(--azul); outline-offset: -2px; }
+.planilha-dica { margin: 8px 0 0; font-size: 12px; color: var(--texto-suave); }
+
 @media (max-width: 600px) {
   main { padding: 12px 16px 40px; }
   .produto-cabecalho { flex-direction: column; align-items: flex-start; }

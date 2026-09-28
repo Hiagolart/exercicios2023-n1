@@ -1,6 +1,8 @@
 const CHAVE_STORAGE = 'desenvolvimento-produto:etapas';
 const CHAVE_PRECOS = 'desenvolvimento-produto:precos';
+const CHAVE_REQUISITOS = 'desenvolvimento-produto:requisitos';
 const ETAPA_PESQUISA = ETAPAS.indexOf('Pesquisa de mercado');
+const ETAPA_REQUISITOS = ETAPAS.indexOf('Definição de Requisitos técnicos');
 
 let produtoAtual = null;
 let etapaSelecionada = null;
@@ -50,6 +52,32 @@ function salvarPrecos(id, linhas) {
   todos[id] = linhas;
   try {
     localStorage.setItem(CHAVE_PRECOS, JSON.stringify(todos));
+  } catch {
+    // Sem armazenamento disponível: as alterações valem só nesta sessão.
+  }
+}
+
+// Planilha de requisitos técnicos: uma matriz de textos por produto.
+function planilhaNova() {
+  const cabecalho = ['Requisito', 'Especificação', 'Unidade', 'Observação', ''];
+  return [cabecalho, ...Array.from({ length: 9 }, () => Array(cabecalho.length).fill(''))];
+}
+
+function requisitosDoProduto(id) {
+  try {
+    const salvo = (JSON.parse(localStorage.getItem(CHAVE_REQUISITOS)) || {})[id];
+    if (Array.isArray(salvo) && salvo.length && Array.isArray(salvo[0])) return salvo;
+  } catch {
+    // Ignora dados inválidos e começa uma planilha nova.
+  }
+  return planilhaNova();
+}
+
+function salvarRequisitos(id, grade) {
+  try {
+    const todos = JSON.parse(localStorage.getItem(CHAVE_REQUISITOS)) || {};
+    todos[id] = grade;
+    localStorage.setItem(CHAVE_REQUISITOS, JSON.stringify(todos));
   } catch {
     // Sem armazenamento disponível: as alterações valem só nesta sessão.
   }
@@ -234,7 +262,9 @@ function renderPainel() {
     });
   });
 
-  if (i === ETAPA_PESQUISA) renderTabelaPrecos(document.getElementById('conteudo-etapa'));
+  const conteudo = document.getElementById('conteudo-etapa');
+  if (i === ETAPA_PESQUISA) renderTabelaPrecos(conteudo);
+  if (i === ETAPA_REQUISITOS) renderPlanilha(conteudo);
 }
 
 function renderTabelaPrecos(container) {
@@ -298,6 +328,118 @@ function renderTabelaPrecos(container) {
     renderTabelaPrecos(container);
     container.querySelector(`#conc-${linhas.length - 1}`).focus();
   });
+}
+
+// ---------- Planilha (estilo Excel) ----------
+
+const letraColuna = (n) => {
+  let s = '';
+  for (n += 1; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s;
+  return s;
+};
+
+const escaparAttr = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+function renderPlanilha(container, foco) {
+  const grade = requisitosDoProduto(produtoAtual.id);
+  const colunas = grade[0].length;
+  const salvar = () => salvarRequisitos(produtoAtual.id, grade);
+
+  container.innerHTML = `
+    <h4>Requisitos técnicos</h4>
+    <div class="planilha-barra">
+      <span class="ref-celula" id="ref-celula">A1</span>
+      <button class="planilha-acao" id="add-linha">+ Linha</button>
+      <button class="planilha-acao" id="add-coluna">+ Coluna</button>
+      <button class="planilha-acao" id="del-linha" ${grade.length <= 1 ? 'disabled' : ''}>− Linha</button>
+      <button class="planilha-acao" id="del-coluna" ${colunas <= 1 ? 'disabled' : ''}>− Coluna</button>
+    </div>
+    <div class="planilha-rolagem">
+      <table class="planilha">
+        <thead>
+          <tr><th class="canto"></th>${grade[0].map((_, c) => `<th data-col="${c}">${letraColuna(c)}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${grade.map((linha, r) => `
+            <tr>
+              <th data-lin="${r}">${r + 1}</th>
+              ${linha.map((valor, c) => `<td><input id="cel-${r}-${c}" data-r="${r}" data-c="${c}" value="${escaparAttr(valor)}" aria-label="Célula ${letraColuna(c)}${r + 1}" autocomplete="off"></td>`).join('')}
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p class="planilha-dica">Use as setas, Enter e Tab para navegar. Dá para colar células copiadas do Excel. "− Linha" e "− Coluna" apagam a última linha ou coluna.</p>`;
+
+  const celula = (r, c) => container.querySelector(`#cel-${r}-${c}`);
+  const focar = (r, c) => {
+    const alvo = celula(Math.max(0, Math.min(grade.length - 1, r)), Math.max(0, Math.min(colunas - 1, c)));
+    if (alvo) { alvo.focus(); alvo.select(); }
+  };
+
+  container.querySelectorAll('.planilha input').forEach((input) => {
+    const r = Number(input.dataset.r);
+    const c = Number(input.dataset.c);
+
+    input.addEventListener('focus', () => {
+      container.querySelector('#ref-celula').textContent = `${letraColuna(c)}${r + 1}`;
+      container.querySelectorAll('.planilha .ativo').forEach((el) => el.classList.remove('ativo'));
+      container.querySelector(`th[data-col="${c}"]`).classList.add('ativo');
+      container.querySelector(`th[data-lin="${r}"]`).classList.add('ativo');
+    });
+
+    input.addEventListener('input', () => {
+      grade[r][c] = input.value;
+      salvar();
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const noInicio = input.selectionStart === 0 && input.selectionEnd === 0;
+      const noFim = input.selectionStart === input.value.length;
+      const tudoSelecionado = input.selectionStart === 0 && input.selectionEnd === input.value.length;
+      if (e.key === 'ArrowUp') { e.preventDefault(); focar(r - 1, c); }
+      else if (e.key === 'ArrowDown' || (e.key === 'Enter' && !e.shiftKey)) { e.preventDefault(); focar(r + 1, c); }
+      else if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); focar(r - 1, c); }
+      else if (e.key === 'ArrowLeft' && (noInicio || tudoSelecionado)) { e.preventDefault(); focar(r, c - 1); }
+      else if (e.key === 'ArrowRight' && (noFim || tudoSelecionado)) { e.preventDefault(); focar(r, c + 1); }
+    });
+
+    // Colar várias células (texto separado por tabulação e quebra de linha, como o Excel copia).
+    input.addEventListener('paste', (e) => {
+      const texto = e.clipboardData?.getData('text/plain') || '';
+      if (!texto.includes('\t') && !texto.trim().includes('\n')) return;
+      e.preventDefault();
+      const linhas = texto.replace(/\r/g, '').replace(/\n$/, '').split('\n').map((l) => l.split('\t'));
+      const largura = Math.max(...linhas.map((l) => l.length));
+      while (grade[0].length < c + largura) grade.forEach((l) => l.push(''));
+      while (grade.length < r + linhas.length) grade.push(Array(grade[0].length).fill(''));
+      linhas.forEach((l, dr) => l.forEach((v, dc) => { grade[r + dr][c + dc] = v; }));
+      salvar();
+      renderPlanilha(container, [r, c]);
+    });
+  });
+
+  container.querySelector('#add-linha').addEventListener('click', () => {
+    grade.push(Array(colunas).fill(''));
+    salvar();
+    renderPlanilha(container, [grade.length - 1, 0]);
+  });
+  container.querySelector('#add-coluna').addEventListener('click', () => {
+    grade.forEach((l) => l.push(''));
+    salvar();
+    renderPlanilha(container, [0, colunas]);
+  });
+  container.querySelector('#del-linha').addEventListener('click', () => {
+    grade.pop();
+    salvar();
+    renderPlanilha(container);
+  });
+  container.querySelector('#del-coluna').addEventListener('click', () => {
+    grade.forEach((l) => l.pop());
+    salvar();
+    renderPlanilha(container);
+  });
+
+  if (foco) focar(...foco);
 }
 
 // ---------- Navegação ----------
