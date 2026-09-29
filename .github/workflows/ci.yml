@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: comex
+          POSTGRES_PASSWORD: comex
+          POSTGRES_DB: comex
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U comex"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://comex:comex@localhost:5432/comex?schema=public
+      TEST_DATABASE_URL: postgresql://comex:comex@localhost:5432/comex_test?schema=public
+      BETTER_AUTH_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Segredo efêmero de autenticação (somente CI)
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+      - run: pnpm install --frozen-lockfile
+      - name: Criar banco de teste
+        run: PGPASSWORD=comex psql -h localhost -U comex -d comex -c "CREATE DATABASE comex_test"
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:integration
+      - run: pnpm db:deploy
+      - run: pnpm build
+      - name: Carga fictícia para os testes ponta a ponta
+        run: pnpm ingest ncm --source mock
+      - run: pnpm --filter @comex/web exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+        env:
+          CI: "true"

@@ -1,0 +1,255 @@
+// Esquema relacional do Comex Intelligence.
+// Convenção: modelos em PascalCase no Prisma, tabelas e colunas em snake_case no banco.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Proveniência dos dados
+// ---------------------------------------------------------------------------
+
+/// Fonte de dados registrada (oficial, arquivo enviado ou fictícia).
+model DataSource {
+  /// Identificador estável, ex.: "rfb-classif-ncm".
+  id        String   @id
+  nome      String
+  url       String?
+  licenca   String?
+  descricao String
+  /// Fontes fictícias são rotuladas em toda a interface.
+  isMock    Boolean  @map("is_mock")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  runs     IngestionRun[]
+  ncmNodes NcmNode[]
+
+  @@map("data_source")
+}
+
+enum DataKind {
+  ncm
+  imports
+  companies
+  tariffs
+}
+
+enum IngestionStatus {
+  running
+  succeeded
+  failed
+}
+
+/// Execução de uma carga, com o relatório exigido (processados, inseridos, etc.).
+model IngestionRun {
+  id            String          @id @default(cuid())
+  sourceId      String          @map("source_id")
+  kind          DataKind
+  status        IngestionStatus @default(running)
+  startedAt     DateTime        @default(now()) @map("started_at")
+  finishedAt    DateTime?       @map("finished_at")
+  /// Data de referência informada pela fonte (ex.: última alteração da base).
+  referenceDate DateTime?       @map("reference_date") @db.Date
+  processados   Int             @default(0)
+  inseridos     Int             @default(0)
+  atualizados   Int             @default(0)
+  inalterados   Int             @default(0)
+  rejeitados    Int             @default(0)
+  errorMessage  String?         @map("error_message")
+  fileHash      String?         @map("file_hash")
+
+  source DataSource       @relation(fields: [sourceId], references: [id])
+  errors IngestionError[]
+
+  @@index([sourceId, startedAt])
+  @@map("ingestion_run")
+}
+
+model IngestionError {
+  id     String @id @default(cuid())
+  runId  String @map("run_id")
+  /// Posição do registro no lote (1-based).
+  linha  Int
+  campo  String
+  motivo String
+
+  run IngestionRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("ingestion_error")
+}
+
+// ---------------------------------------------------------------------------
+// Nomenclatura (NCM)
+// ---------------------------------------------------------------------------
+
+enum NcmLevel {
+  capitulo
+  posicao
+  subposicao
+  item
+  subitem
+}
+
+/// Nó da nomenclatura: capítulo (2 dígitos) até subitem (8 dígitos).
+model NcmNode {
+  id           String    @id @default(cuid())
+  /// Somente dígitos.
+  codigo       String    @unique @db.VarChar(8)
+  nivel        NcmLevel
+  parentCodigo String?   @map("parent_codigo") @db.VarChar(8)
+  descricao    String
+  dataInicio   DateTime? @map("data_inicio") @db.Date
+  dataFim      DateTime? @map("data_fim") @db.Date
+  atoTipo      String?   @map("ato_tipo")
+  atoNumero    String?   @map("ato_numero")
+  atoAno       Int?      @map("ato_ano")
+  sourceId     String    @map("source_id")
+  /// Última carga em que o código constava na fonte.
+  lastSeenRunId String?  @map("last_seen_run_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  source DataSource @relation(fields: [sourceId], references: [id])
+
+  @@index([parentCodigo])
+  @@index([nivel])
+  @@map("ncm_node")
+}
+
+// ---------------------------------------------------------------------------
+// Usuários e autenticação (modelos exigidos pelo Better Auth)
+// ---------------------------------------------------------------------------
+
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String?
+  role          Role     @default(user)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  sessions  Session[]
+  accounts  Account[]
+  favoritos Favorito[]
+  pesquisas Pesquisa[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+/// Controle de taxa de requisições (armazenamento do Better Auth).
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt @map("last_request")
+
+  @@map("rate_limit")
+}
+
+// ---------------------------------------------------------------------------
+// Uso da aplicação
+// ---------------------------------------------------------------------------
+
+enum FavoritoTipo {
+  ncm
+  produto
+  empresa
+  pais
+}
+
+model Favorito {
+  id         String       @id @default(cuid())
+  userId     String       @map("user_id")
+  tipo       FavoritoTipo
+  /// Código ou identificador do item favoritado (ex.: dígitos da NCM).
+  referencia String
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tipo, referencia])
+  @@map("favorito")
+}
+
+enum PesquisaTipo {
+  codigo
+  descricao
+  produto
+}
+
+model Pesquisa {
+  id        String       @id @default(cuid())
+  userId    String       @map("user_id")
+  termo     String
+  tipo      PesquisaTipo
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("pesquisa")
+}

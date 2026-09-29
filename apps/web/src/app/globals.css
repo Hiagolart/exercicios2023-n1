@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/*
+ * Layout: menu lateral fixo + área de conteúdo com largura máxima; dados em
+ * tabelas e listas densas, sem cartões decorativos.
+ * Cor: neutros frios com leve viés petróleo e um único acento petróleo.
+ * Cores semânticas (alerta, erro) são independentes do acento.
+ */
+:root {
+  --bg: #f5f7f7;
+  --surface: #ffffff;
+  --surface-2: #edf1f1;
+  --fg: #132120;
+  --muted: #58696a;
+  --line: #d9e1e1;
+  --accent: #0d6a70;
+  --accent-hover: #0a5559;
+  --accent-fg: #ffffff;
+  --accent-soft: #e1eff0;
+  --warn-bg: #fff3d6;
+  --warn-fg: #6e4500;
+  --warn-line: #f0d48f;
+  --danger: #b42318;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1313;
+    --surface: #121b1b;
+    --surface-2: #192424;
+    --fg: #e3ebea;
+    --muted: #93a4a3;
+    --line: #253232;
+    --accent: #5cbcc1;
+    --accent-hover: #7fcdd1;
+    --accent-fg: #06201f;
+    --accent-soft: #143030;
+    --warn-bg: #33270b;
+    --warn-fg: #f3c76b;
+    --warn-line: #5a4415;
+    --danger: #f97066;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0c1313;
+  --surface: #121b1b;
+  --surface-2: #192424;
+  --fg: #e3ebea;
+  --muted: #93a4a3;
+  --line: #253232;
+  --accent: #5cbcc1;
+  --accent-hover: #7fcdd1;
+  --accent-fg: #06201f;
+  --accent-soft: #143030;
+  --warn-bg: #33270b;
+  --warn-fg: #f3c76b;
+  --warn-line: #5a4415;
+  --danger: #f97066;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-fg: var(--warn-fg);
+  --color-warn-line: var(--warn-line);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

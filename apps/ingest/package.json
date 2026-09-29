@@ -1,0 +1,25 @@
+{
+  "name": "@comex/ingest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx --env-file-if-exists=../../.env src/cli.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --project unit",
+    "test:integration": "vitest run --project integration"
+  },
+  "dependencies": {
+    "@comex/core": "workspace:*",
+    "@comex/db": "workspace:*"
+  },
+  "devDependencies": {
+    "@comex/eslint-config": "workspace:*",
+    "@types/node": "22.20.4",
+    "eslint": "9.39.5",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.2"
+  }
+}

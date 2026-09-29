@@ -1,0 +1,32 @@
+{
+  "name": "@comex/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "postinstall": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@comex/core": "workspace:*",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@comex/eslint-config": "workspace:*",
+    "@types/node": "22.20.4",
+    "@types/pg": "8.23.1",
+    "dotenv": "18.0.4",
+    "eslint": "9.39.5",
+    "prisma": "7.10.0",
+    "typescript": "5.9.3"
+  }
+}

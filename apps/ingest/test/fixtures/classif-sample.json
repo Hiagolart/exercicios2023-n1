@@ -1,0 +1,45 @@
+{
+  "Data_Ultima_Atualizacao_NCM": "15/09/2026",
+  "Nomenclaturas": [
+    {
+      "Codigo": "98",
+      "Descricao": "Capítulo de teste",
+      "Data_Inicio": "01/04/2022",
+      "Data_Fim": "31/12/9999",
+      "Tipo_Ato_Ini": "Res Teste",
+      "Numero_Ato_Ini": "1",
+      "Ano_Ato_Ini": "2021"
+    },
+    {
+      "Codigo": "98.01",
+      "Descricao": "Posição de teste",
+      "Data_Inicio": "01/04/2022",
+      "Data_Fim": "31/12/9999"
+    },
+    {
+      "Codigo": "9801.10",
+      "Descricao": "- Subposição de teste",
+      "Data_Inicio": "01/04/2022",
+      "Data_Fim": "31/12/9999"
+    },
+    {
+      "Codigo": "9801.10.00",
+      "Descricao": "-- Subitem de teste",
+      "Data_Inicio": "01/04/2022",
+      "Data_Fim": "31/12/9999"
+    },
+    {
+      "Codigo": "9801.90.00",
+      "Descricao": "- Outros (teste)",
+      "Data_Inicio": "01/04/2022",
+      "Data_Fim": "31/12/9999"
+    },
+    {
+      "Codigo": "9801.10.00",
+      "Descricao": "Duplicado",
+      "Data_Inicio": "01/04/2022",
+      "Data_Fim": "31/12/9999"
+    },
+    { "Codigo": "123", "Descricao": "Código inválido", "Data_Inicio": "01/04/2022" }
+  ]
+}
