@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@comex/core": "workspace:*",
-    "@comex/db": "workspace:*"
+    "@comex/db": "workspace:*",
+    "exceljs": "4.4.0",
+    "csv-parse": "6.2.1"
   },
   "devDependencies": {
     "@comex/eslint-config": "workspace:*",

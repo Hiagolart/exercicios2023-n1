@@ -11,6 +11,7 @@ export function formatReport(report: IngestionReport): string {
     `Atualizados:  ${report.atualizados}`,
     `Inalterados:  ${report.inalterados}`,
     `Rejeitados:   ${report.rejeitados}`,
+    `Ignorados:    ${report.ignorados}`,
   ];
   if (report.erros.length > 0) {
     lines.push("", "Erros encontrados:");

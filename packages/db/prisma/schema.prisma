@@ -29,8 +29,10 @@ model DataSource {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  runs     IngestionRun[]
-  ncmNodes NcmNode[]
+  runs      IngestionRun[]
+  ncmNodes  NcmNode[]
+  aliquotas Aliquota[]
+  destaques DestaqueEx[]
 
   @@map("data_source")
 }
@@ -63,6 +65,8 @@ model IngestionRun {
   atualizados   Int             @default(0)
   inalterados   Int             @default(0)
   rejeitados    Int             @default(0)
+  /// Linhas lidas que não são registros de dados (ex.: títulos de capítulo na TIPI).
+  ignorados     Int             @default(0)
   errorMessage  String?         @map("error_message")
   fileHash      String?         @map("file_hash")
 
@@ -101,26 +105,26 @@ enum NcmLevel {
 
 /// Nó da nomenclatura: capítulo (2 dígitos) até subitem (8 dígitos).
 model NcmNode {
-  id           String    @id @default(cuid())
+  id            String                   @id @default(cuid())
   /// Somente dígitos.
-  codigo       String    @unique @db.VarChar(8)
-  nivel        NcmLevel
-  parentCodigo String?   @map("parent_codigo") @db.VarChar(8)
-  descricao    String
-  dataInicio   DateTime? @map("data_inicio") @db.Date
-  dataFim      DateTime? @map("data_fim") @db.Date
-  atoTipo      String?   @map("ato_tipo")
-  atoNumero    String?   @map("ato_numero")
-  atoAno       Int?      @map("ato_ano")
-  sourceId     String    @map("source_id")
+  codigo        String                   @unique @db.VarChar(8)
+  nivel         NcmLevel
+  parentCodigo  String?                  @map("parent_codigo") @db.VarChar(8)
+  descricao     String
+  dataInicio    DateTime?                @map("data_inicio") @db.Date
+  dataFim       DateTime?                @map("data_fim") @db.Date
+  atoTipo       String?                  @map("ato_tipo")
+  atoNumero     String?                  @map("ato_numero")
+  atoAno        Int?                     @map("ato_ano")
+  sourceId      String                   @map("source_id")
   /// Última carga em que o código constava na fonte.
-  lastSeenRunId String?  @map("last_seen_run_id")
+  lastSeenRunId String?                  @map("last_seen_run_id")
   /// Descrições do nó e dos seus ancestrais, sem acento e em minúsculas (busca aproximada).
-  textoBusca   String?   @map("texto_busca")
+  textoBusca    String?                  @map("texto_busca")
   /// Vetor de busca textual (descrição própria com peso A, ancestrais com peso B).
-  busca        Unsupported("tsvector")?
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  busca         Unsupported("tsvector")?
+  createdAt     DateTime                 @default(now()) @map("created_at")
+  updatedAt     DateTime                 @updatedAt @map("updated_at")
 
   source DataSource @relation(fields: [sourceId], references: [id])
 
@@ -129,6 +133,83 @@ model NcmNode {
   @@index([busca], type: Gin)
   @@index([textoBusca(ops: raw("gin_trgm_ops"))], type: Gin)
   @@map("ncm_node")
+}
+
+// ---------------------------------------------------------------------------
+// Tributação
+// ---------------------------------------------------------------------------
+
+enum Tributo {
+  II
+  IPI
+  PIS
+  COFINS
+  CBS
+  IBS
+}
+
+enum TipoAliquota {
+  ad_valorem
+  especifica
+  nao_tributado
+}
+
+enum RegimeAliquota {
+  geral
+  excecao
+  regra_geral
+}
+
+/// Alíquota de um tributo, com vigência. O histórico é formado pelos registros encerrados.
+model Aliquota {
+  id               String         @id @default(cuid())
+  /// 8 dígitos; nulo para regra geral (vale para todos os códigos sem alíquota própria).
+  ncmCodigo        String?        @map("ncm_codigo") @db.VarChar(8)
+  tributo          Tributo
+  regime           RegimeAliquota
+  /// Lista de exceção (ex.: "LETEC"); vazio quando não se aplica.
+  lista            String         @default("")
+  tipo             TipoAliquota
+  /// Percentual (14 = 14%).
+  aliquota         Decimal?       @db.Decimal(9, 4)
+  vigenciaInicio   DateTime?      @map("vigencia_inicio") @db.Date
+  vigenciaFim      DateTime?      @map("vigencia_fim") @db.Date
+  /// Vigência deduzida da data da carga, porque a fonte não a informou.
+  vigenciaInferida Boolean        @default(false) @map("vigencia_inferida")
+  atoLegal         String?        @map("ato_legal")
+  observacao       String?
+  sourceId         String         @map("source_id")
+  ingestionRunId   String?        @map("ingestion_run_id")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  source DataSource @relation(fields: [sourceId], references: [id])
+
+  @@index([ncmCodigo, tributo])
+  @@index([sourceId, vigenciaFim])
+  @@map("aliquota")
+}
+
+/// Destaque "Ex": ex-tarifário do II ou Ex da TIPI, com alíquota própria para um produto específico.
+model DestaqueEx {
+  id             String    @id @default(cuid())
+  ncmCodigo      String    @map("ncm_codigo") @db.VarChar(8)
+  tributo        Tributo
+  numero         String
+  descricao      String
+  aliquota       Decimal   @db.Decimal(9, 4)
+  vigenciaInicio DateTime? @map("vigencia_inicio") @db.Date
+  vigenciaFim    DateTime? @map("vigencia_fim") @db.Date
+  atoLegal       String?   @map("ato_legal")
+  sourceId       String    @map("source_id")
+  ingestionRunId String?   @map("ingestion_run_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  source DataSource @relation(fields: [sourceId], references: [id])
+
+  @@index([ncmCodigo, tributo])
+  @@map("destaque_ex")
 }
 
 // ---------------------------------------------------------------------------

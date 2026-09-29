@@ -17,7 +17,9 @@ import { FavoriteButton } from "@/components/ncm/favorite-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
+import { TaxPanel } from "@/components/tax/tax-panel";
 import { ncmData } from "@/lib/data/ncm";
+import { getTaxView } from "@/lib/data/taxes";
 import { userData } from "@/lib/data/user";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { requireSession } from "@/lib/session";
@@ -40,11 +42,12 @@ export default async function NcmNodePage({ params }: Props) {
 
   const node = await ncmData.node(codigo);
   if (!node) notFound();
-  const [children, path, run, favorito] = await Promise.all([
+  const [children, path, run, favorito, taxView] = await Promise.all([
     ncmData.children(codigo),
     ncmData.path(codigo),
     ncmData.latestRun(),
     userData.isFavoriteNcm(user.id, codigo),
+    node.nivel === "subitem" ? getTaxView(codigo) : Promise.resolve(null),
   ]);
 
   const status = ncmStatusOf(node);
@@ -121,14 +124,14 @@ export default async function NcmNodePage({ params }: Props) {
         </dl>
       </Section>
 
-      <Section title="Tributos e tratamento administrativo">
-        <ul className="grid gap-x-8 gap-y-2 text-sm text-muted sm:grid-cols-2">
-          <li>II, exceções da TEC e ex-tarifários (Fase 3)</li>
-          <li>IPI, PIS/Cofins-Importação e CBS/IBS (Fase 3)</li>
-          <li>Notas explicativas e legislação (Fase 4)</li>
-          <li>Anuências, defesa comercial e acordos (Fase 5)</li>
-        </ul>
-      </Section>
+      {node.nivel === "subitem" && taxView ? (
+        <TaxPanel ncm={node.codigo} view={taxView} />
+      ) : (
+        <p className="text-sm text-muted">
+          Alíquotas e o simulador de tributos se aplicam aos códigos de 8 dígitos. Navegue até um
+          subitem abaixo.
+        </p>
+      )}
 
       {children.length > 0 ? (
         <Section

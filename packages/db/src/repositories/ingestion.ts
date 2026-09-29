@@ -41,6 +41,7 @@ export async function finishIngestionRun(
         atualizados: report.atualizados,
         inalterados: report.inalterados,
         rejeitados: report.rejeitados,
+        ignorados: report.ignorados,
       },
     }),
   ]);

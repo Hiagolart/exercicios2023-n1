@@ -7,6 +7,6 @@ export function createTestDb(): PrismaClient {
 /** Limpa as tabelas de dados entre os testes. */
 export async function resetDb(db: PrismaClient): Promise<void> {
   await db.$executeRawUnsafe(
-    'TRUNCATE TABLE "ingestion_error", "ingestion_run", "ncm_node", "data_source" CASCADE',
+    'TRUNCATE TABLE "destaque_ex", "aliquota", "ingestion_error", "ingestion_run", "ncm_node", "data_source" CASCADE',
   );
 }

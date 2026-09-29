@@ -13,10 +13,11 @@ describe("isActive", () => {
 });
 
 describe("NAV_ITEMS", () => {
-  it("contém o menu definido no escopo, na ordem", () => {
+  it("contém o menu definido no escopo, mais o simulador, na ordem", () => {
     expect(NAV_ITEMS.map((i) => i.label)).toEqual([
       "Dashboard",
       "Pesquisa NCM",
+      "Simulador de tributos",
       "Inteligência de Importações",
       "Empresas",
       "Países",

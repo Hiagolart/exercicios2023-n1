@@ -14,6 +14,7 @@ describe("formatReport", () => {
       atualizados: 0,
       inalterados: 0,
       rejeitados: 25,
+      ignorados: 0,
       erros,
     });
     expect(text).toContain("Rejeitados:   25");

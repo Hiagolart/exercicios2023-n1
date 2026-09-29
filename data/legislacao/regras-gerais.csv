@@ -1,0 +1,5 @@
+tributo;regime;aliquota;vigencia_inicio;vigencia_fim;ato_legal;observacao
+PIS;regra_geral;2,10;;;Lei 10.865/2004, art. 8º, I (redação da Lei 13.137/2015);Alíquota geral do PIS/Pasep-Importação. Não inclui alíquotas diferenciadas por NCM (tributação concentrada, alíquota zero, suspensões). Transcrição manual da legislação: conferir.
+COFINS;regra_geral;9,65;;;Lei 10.865/2004, art. 8º, II (redação da Lei 13.137/2015);Alíquota geral da Cofins-Importação. Não inclui alíquotas diferenciadas por NCM nem o adicional de Cofins-Importação. Transcrição manual da legislação: conferir.
+CBS;regra_geral;0,9;01/01/2026;31/12/2026;LC 214/2025 (período de teste da reforma tributária);Alíquota de teste de 2026, compensável com PIS/Cofins. Não é calculada no simulador. Transcrição manual da legislação: conferir.
+IBS;regra_geral;0,1;01/01/2026;31/12/2026;LC 214/2025 (período de teste da reforma tributária);Alíquota de teste de 2026. Não é calculada no simulador. Transcrição manual da legislação: conferir.

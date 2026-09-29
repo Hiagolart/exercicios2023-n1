@@ -12,7 +12,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "zod": "4.6.5"
+    "zod": "4.6.5",
+    "decimal.js": "10.6.0"
   },
   "devDependencies": {
     "@comex/eslint-config": "workspace:*",

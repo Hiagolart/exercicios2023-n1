@@ -12,3 +12,4 @@ export * from "./repositories/ncm";
 export * from "./repositories/search";
 export * from "./repositories/favorites";
 export * from "./repositories/history";
+export * from "./repositories/taxes";

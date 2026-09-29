@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Building2,
+  Calculator,
   Globe2,
   History,
   LayoutDashboard,
@@ -21,6 +22,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/ncm", label: "Pesquisa NCM", icon: Search },
+  { href: "/simulador", label: "Simulador de tributos", icon: Calculator },
   { href: "/importacoes", label: "Inteligência de Importações", icon: BarChart3 },
   { href: "/empresas", label: "Empresas", icon: Building2 },
   { href: "/paises", label: "Países", icon: Globe2 },

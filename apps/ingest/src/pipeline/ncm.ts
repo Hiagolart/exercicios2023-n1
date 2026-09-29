@@ -49,6 +49,7 @@ export async function runNcmIngestion(
       processados,
       ...written,
       rejeitados: rejected.length,
+      ignorados: 0,
       erros: rejected,
     };
     await finishIngestionRun(db, runId, report, batch.referenceDate);

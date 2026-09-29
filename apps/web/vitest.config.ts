@@ -5,5 +5,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
-  test: { environment: "jsdom", include: ["src/**/*.test.{ts,tsx}"], exclude: ["e2e/**"] },
+  test: {
+    environment: "jsdom",
+    include: ["src/**/*.test.{ts,tsx}"],
+    exclude: ["e2e/**"],
+    setupFiles: ["./vitest.setup.ts"],
+  },
 });

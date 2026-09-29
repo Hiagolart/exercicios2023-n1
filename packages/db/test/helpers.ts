@@ -9,7 +9,7 @@ export function createTestDb(): PrismaClient {
 
 export async function resetDb(db: PrismaClient): Promise<void> {
   await db.$executeRawUnsafe(
-    'TRUNCATE TABLE "pesquisa", "favorito", "session", "account", "user", "ingestion_error", "ingestion_run", "ncm_node", "data_source" CASCADE',
+    'TRUNCATE TABLE "pesquisa", "favorito", "session", "account", "user", "destaque_ex", "aliquota", "ingestion_error", "ingestion_run", "ncm_node", "data_source" CASCADE',
   );
 }
 

@@ -33,18 +33,18 @@ Levantamento funcional feito a partir da descrição pública do produto ([Aduan
 
 ## 2. Fases
 
-| Fase | Entrega                                                                                       | Situação                    |
-| ---- | --------------------------------------------------------------------------------------------- | --------------------------- |
-| 0    | Validação das fontes com download real                                                        | Bloqueada: rede do ambiente |
-| 1    | Fundação: monorepo, banco, autenticação, layout, estrutura da NCM                             | ✅                          |
-| 2    | Pesquisa NCM: busca por código e descrição, página de detalhes, favoritos, histórico          | Em andamento                |
-| 3    | Tributação: II, exceções e ex-tarifários, IPI, PIS/Cofins, CBS/IBS, histórico, simulador      | —                           |
-| 4    | Nomenclatura avançada: NESH, notas de seção e capítulo, legislação e atos legais              | —                           |
-| 5    | Tratamento administrativo, defesa comercial, acordos e preferências, ICMS                     | —                           |
-| 6    | Estatísticas de importação (Comex Stat): o diferencial em relação ao TECwin                   | —                           |
-| 7    | IA: resumo da NCM, apoio à classificação (nunca como classificação oficial), Assistente Comex | —                           |
-| 8    | Relatórios em PDF, Excel e CSV                                                                | —                           |
-| 9    | Refinamento: segurança, desempenho, acessibilidade, documentação                              | —                           |
+| Fase | Entrega                                                                                       | Situação                                                     |
+| ---- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 0    | Validação das fontes com download real                                                        | Bloqueada: rede do ambiente                                  |
+| 1    | Fundação: monorepo, banco, autenticação, layout, estrutura da NCM                             | ✅                                                           |
+| 2    | Pesquisa NCM: busca por código e descrição, página de detalhes, favoritos, histórico          | ✅                                                           |
+| 3    | Tributação: II, exceções e ex-tarifários, IPI, PIS/Cofins, CBS/IBS, histórico, simulador      | ✅ Estrutura, cargas e simulador; aguarda planilhas oficiais |
+| 4    | Nomenclatura avançada: NESH, notas de seção e capítulo, legislação e atos legais              | —                                                            |
+| 5    | Tratamento administrativo, defesa comercial, acordos e preferências, ICMS                     | —                                                            |
+| 6    | Estatísticas de importação (Comex Stat): o diferencial em relação ao TECwin                   | —                                                            |
+| 7    | IA: resumo da NCM, apoio à classificação (nunca como classificação oficial), Assistente Comex | —                                                            |
+| 8    | Relatórios em PDF, Excel e CSV                                                                | —                                                            |
+| 9    | Refinamento: segurança, desempenho, acessibilidade, documentação                              | —                                                            |
 
 ## 3. Decisões e riscos desta revisão
 

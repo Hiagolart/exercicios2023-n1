@@ -13,20 +13,20 @@ equivalentes às de um sistema de consulta aduaneira como o TECwin, está em
 
 ## Estado atual
 
-**Fases 1 (Fundação) e 2 (Pesquisa NCM) concluídas.** A Fase 0 (validação com download real das fontes oficiais) está
+**Fases 1 (Fundação), 2 (Pesquisa NCM) e 3 (Tributação) concluídas; as tabelas oficiais ainda não foram carregadas.** A Fase 0 (validação com download real das fontes oficiais) está
 pendente de liberação de rede no ambiente de desenvolvimento.
 
-| Módulo                                                     | Situação                           |
-| ---------------------------------------------------------- | ---------------------------------- |
-| Monorepo, TypeScript strict, lint, testes, CI              | ✅                                 |
-| Banco PostgreSQL + Prisma (nomenclatura, cargas, usuários) | ✅                                 |
-| Autenticação (e-mail e senha), proteção de rotas e APIs    | ✅                                 |
-| Layout, menu lateral, landing page, tema claro/escuro      | ✅                                 |
-| Ingestão da NCM oficial (Classif/RFB) com relatório        | ✅ (formato a confirmar na Fase 0) |
-| Navegação pela estrutura da NCM                            | ✅                                 |
-| Pesquisa por código e descrição, favoritos, histórico      | ✅                                 |
-| Tributação (II, IPI, PIS/Cofins, CBS/IBS)                  | Fase 3                             |
-| Dados de importação (Comex Stat)                           | Fase 6                             |
+| Módulo                                                              | Situação                           |
+| ------------------------------------------------------------------- | ---------------------------------- |
+| Monorepo, TypeScript strict, lint, testes, CI                       | ✅                                 |
+| Banco PostgreSQL + Prisma (nomenclatura, cargas, usuários)          | ✅                                 |
+| Autenticação (e-mail e senha), proteção de rotas e APIs             | ✅                                 |
+| Layout, menu lateral, landing page, tema claro/escuro               | ✅                                 |
+| Ingestão da NCM oficial (Classif/RFB) com relatório                 | ✅ (formato a confirmar na Fase 0) |
+| Navegação pela estrutura da NCM                                     | ✅                                 |
+| Pesquisa por código e descrição, favoritos, histórico               | ✅                                 |
+| Tributação: alíquotas, exceções, destaques Ex, histórico, simulador | ✅ (aguarda planilhas oficiais)    |
+| Dados de importação (Comex Stat)                                    | Fase 6                             |
 
 ## Estrutura
 
@@ -63,6 +63,14 @@ Sem acesso à rede das fontes oficiais, há duas alternativas:
 - `pnpm ingest ncm --source mock` — carrega **dados fictícios** (capítulo 99, descrições marcadas
   `[FICTÍCIO]`). A interface exibe um aviso sempre que esses dados aparecem. Bloqueado quando
   `NODE_ENV=production`.
+
+Tributos: veja [`docs/IMPORTACAO_TRIBUTOS.md`](docs/IMPORTACAO_TRIBUTOS.md).
+
+```bash
+pnpm ingest tributos --source legislacao             # regras gerais (PIS/Cofins, CBS/IBS)
+pnpm ingest tributos --source tipi --file tipi.xlsx  # IPI
+pnpm ingest tributos --source tec --file tec.xlsx    # II
+```
 
 ## Verificações
 

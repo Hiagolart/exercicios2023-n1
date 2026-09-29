@@ -44,8 +44,11 @@ jobs:
       - run: pnpm test:integration
       - run: pnpm db:deploy
       - run: pnpm build
-      - name: Carga fictícia para os testes ponta a ponta
-        run: pnpm ingest ncm --source mock
+      - name: Cargas para os testes ponta a ponta (nomenclatura e tributos fictícios + regras gerais)
+        run: |
+          pnpm ingest ncm --source mock
+          pnpm ingest tributos --source mock
+          pnpm ingest tributos --source legislacao
       - run: pnpm --filter @comex/web exec playwright install --with-deps chromium
       - run: pnpm test:e2e
         env:

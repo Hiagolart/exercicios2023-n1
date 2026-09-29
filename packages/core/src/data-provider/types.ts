@@ -52,5 +52,7 @@ export interface IngestionReport {
   atualizados: number;
   inalterados: number;
   rejeitados: number;
+  /** Linhas lidas que não são registros de dados (ex.: títulos de capítulo). */
+  ignorados: number;
   erros: RejectedRecord[];
 }
