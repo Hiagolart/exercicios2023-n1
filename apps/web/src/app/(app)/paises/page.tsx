@@ -8,7 +8,7 @@ export default function CountriesPage() {
     <PlannedFeature
       title="Países"
       description="Origem das importações: participação, ranking e evolução por país."
-      phase="Fase 4"
+      phase="Fase 6"
       items={[
         "Participação de cada país de origem por NCM e período",
         "Evolução da participação ao longo dos anos",

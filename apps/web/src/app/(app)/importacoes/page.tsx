@@ -8,7 +8,7 @@ export default function ImportsPage() {
     <PlannedFeature
       title="Inteligência de Importações"
       description="Quantidade, valor e origem das importações por NCM, com base no Comex Stat (MDIC)."
-      phase="Fase 3"
+      phase="Fase 6"
       items={[
         "Carga dos arquivos oficiais de importação por NCM (Comex Stat)",
         "Quantidade estatística, peso líquido, valor FOB, frete, seguro e CIF quando disponíveis",

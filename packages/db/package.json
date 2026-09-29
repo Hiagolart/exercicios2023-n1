@@ -12,7 +12,8 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:integration": "vitest run"
   },
   "dependencies": {
     "@comex/core": "workspace:*",
@@ -27,6 +28,7 @@
     "dotenv": "18.0.4",
     "eslint": "9.39.5",
     "prisma": "7.10.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "5.0.2"
   }
 }

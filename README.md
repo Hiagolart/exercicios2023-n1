@@ -6,12 +6,14 @@ Plataforma de pesquisa fiscal (NCM) e inteligência de importações baseada em 
 > fiscal e demais decisões relacionadas à importação devem ser verificadas nas fontes oficiais e,
 > quando necessário, por profissional habilitado.
 
-A análise técnica, as fontes de dados, a arquitetura e o roadmap estão em
-[`docs/ANALISE_TECNICA.md`](docs/ANALISE_TECNICA.md).
+A análise técnica, as fontes de dados e a arquitetura estão em
+[`docs/ANALISE_TECNICA.md`](docs/ANALISE_TECNICA.md). O roadmap atual, com as funcionalidades
+equivalentes às de um sistema de consulta aduaneira como o TECwin, está em
+[`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Estado atual
 
-**Fase 1 (Fundação) concluída.** A Fase 0 (validação com download real das fontes oficiais) está
+**Fases 1 (Fundação) e 2 (Pesquisa NCM) concluídas.** A Fase 0 (validação com download real das fontes oficiais) está
 pendente de liberação de rede no ambiente de desenvolvimento.
 
 | Módulo                                                     | Situação                           |
@@ -22,8 +24,9 @@ pendente de liberação de rede no ambiente de desenvolvimento.
 | Layout, menu lateral, landing page, tema claro/escuro      | ✅                                 |
 | Ingestão da NCM oficial (Classif/RFB) com relatório        | ✅ (formato a confirmar na Fase 0) |
 | Navegação pela estrutura da NCM                            | ✅                                 |
-| Pesquisa por código/descrição, favoritos, histórico        | Fase 2                             |
-| Dados de importação (Comex Stat)                           | Fase 3                             |
+| Pesquisa por código e descrição, favoritos, histórico      | ✅                                 |
+| Tributação (II, IPI, PIS/Cofins, CBS/IBS)                  | Fase 3                             |
+| Dados de importação (Comex Stat)                           | Fase 6                             |
 
 ## Estrutura
 

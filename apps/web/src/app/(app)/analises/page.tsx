@@ -8,7 +8,7 @@ export default function AnalysesPage() {
     <PlannedFeature
       title="Análises"
       description="Comparações entre NCMs e entre períodos, valor médio e análises assistidas por IA."
-      phase="Fases 4 e 5"
+      phase="Fases 6 e 7"
       items={[
         "Comparação de duas ou mais NCMs",
         "Comparação de períodos (ex.: 2024 × 2025, jan/2025 × jan/2026)",

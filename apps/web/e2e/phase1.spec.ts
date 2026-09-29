@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
-
-const password = "senha-de-teste-123";
+import { signUp } from "./helpers";
 
 test("rotas protegidas redirecionam para o login", async ({ page }) => {
   await page.goto("/dashboard");
@@ -13,16 +12,8 @@ test("API exige autenticação", async ({ request }) => {
 });
 
 test("cadastro, dashboard e navegação na estrutura NCM", async ({ page }, testInfo) => {
-  const email = `e2e-${testInfo.project.name}-${Date.now()}@example.com`;
-
-  await page.goto("/cadastro");
-  await page.getByLabel("Nome").fill("Pessoa de Teste");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
-  await page.getByRole("button", { name: "Criar conta" }).click();
-
-  await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await signUp(page, testInfo.project.name);
+  await expect(page.getByRole("searchbox")).toBeVisible();
   await expect(page.getByRole("status")).toContainText("Dados fictícios");
   await expect(page.getByText(/caráter informativo e de apoio à pesquisa/)).toBeVisible();
 

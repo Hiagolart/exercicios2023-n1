@@ -17,7 +17,7 @@
     "db:migrate": "pnpm --filter @comex/db migrate:dev",
     "db:deploy": "pnpm --filter @comex/db migrate:deploy",
     "ingest": "pnpm --filter @comex/ingest start",
-    "test:integration": "pnpm --filter @comex/ingest test:integration",
+    "test:integration": "pnpm -r --if-present test:integration",
     "test:e2e": "pnpm --filter @comex/web test:e2e",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

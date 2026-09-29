@@ -8,7 +8,7 @@ export default defineConfig({
         test: {
           name: "integration",
           include: ["test/**/*.int.test.ts"],
-          globalSetup: ["test/global-setup.ts"],
+          globalSetup: ["../../packages/db/test/global-setup.ts"],
           fileParallelism: false,
         },
       },

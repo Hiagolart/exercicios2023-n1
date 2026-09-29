@@ -13,10 +13,14 @@ import { SourceNote } from "@/components/data/source-note";
 import { NcmBreadcrumb } from "@/components/ncm/ncm-breadcrumb";
 import { NcmChildren } from "@/components/ncm/ncm-children";
 import { NcmCode } from "@/components/ncm/ncm-code";
+import { FavoriteButton } from "@/components/ncm/favorite-button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { ncmData } from "@/lib/data/ncm";
+import { userData } from "@/lib/data/user";
 import { formatDate, formatDateTime } from "@/lib/format";
+import { requireSession } from "@/lib/session";
 
 interface Props {
   params: Promise<{ codigo: string }>;
@@ -32,13 +36,15 @@ const NOT_AVAILABLE = <span className="text-muted">Não disponível na fonte</sp
 export default async function NcmNodePage({ params }: Props) {
   const { codigo } = await params;
   if (!isValidNcmCodeLength(codigo)) notFound();
+  const { user } = await requireSession();
 
   const node = await ncmData.node(codigo);
   if (!node) notFound();
-  const [children, path, run] = await Promise.all([
+  const [children, path, run, favorito] = await Promise.all([
     ncmData.children(codigo),
     ncmData.path(codigo),
     ncmData.latestRun(),
+    userData.isFavoriteNcm(user.id, codigo),
   ]);
 
   const status = ncmStatusOf(node);
@@ -71,7 +77,7 @@ export default async function NcmNodePage({ params }: Props) {
     [
       "Unidade estatística",
       <span key="u" className="text-muted">
-        Disponível após a carga do Comex Stat (Fase 3)
+        Disponível após a carga do Comex Stat (Fase 6)
       </span>,
     ],
   ];
@@ -87,6 +93,19 @@ export default async function NcmNodePage({ params }: Props) {
           {absentFromLatest ? <Badge tone="warn">Não consta na última carga</Badge> : null}
         </div>
         <p className="max-w-3xl text-lg">{node.descricao}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <FavoriteButton codigo={node.codigo} initial={favorito} />
+          <Button
+            variant="secondary"
+            disabled
+            title="Disponível na Fase 6 (estatísticas de importação)"
+          >
+            Ver importações
+          </Button>
+          <Button variant="secondary" disabled title="Disponível na Fase 7 (IA)">
+            Analisar com IA
+          </Button>
+        </div>
       </header>
 
       {node.source.isMock ? <MockDataBanner /> : null}
@@ -100,6 +119,15 @@ export default async function NcmNodePage({ params }: Props) {
             </div>
           ))}
         </dl>
+      </Section>
+
+      <Section title="Tributos e tratamento administrativo">
+        <ul className="grid gap-x-8 gap-y-2 text-sm text-muted sm:grid-cols-2">
+          <li>II, exceções da TEC e ex-tarifários (Fase 3)</li>
+          <li>IPI, PIS/Cofins-Importação e CBS/IBS (Fase 3)</li>
+          <li>Notas explicativas e legislação (Fase 4)</li>
+          <li>Anuências, defesa comercial e acordos (Fase 5)</li>
+        </ul>
       </Section>
 
       {children.length > 0 ? (

@@ -8,10 +8,11 @@ export default function ProductsPage() {
     <PlannedFeature
       title="Produtos"
       description="Pesquise um produto pela descrição e veja as NCMs relacionadas e seus dados de importação."
-      phase="Fase 2 (busca) e Fase 5 (sugestões por IA)"
+      phase="Fase 7 (IA)"
       items={[
-        "Busca por descrição na nomenclatura oficial",
+        "A busca por descrição já funciona na Pesquisa NCM",
         "Sinônimos revisados para termos comerciais",
+        "Painel do produto com as NCMs relacionadas e seus dados de importação",
         "Sugestões por IA apresentadas como apoio à pesquisa, nunca como classificação fiscal",
       ]}
     />

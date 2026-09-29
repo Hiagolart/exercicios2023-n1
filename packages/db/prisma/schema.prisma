@@ -8,6 +8,7 @@ generator client {
 }
 
 datasource db {
+  // Extensões pg_trgm e unaccent são criadas nas migrações (SQL).
   provider = "postgresql"
 }
 
@@ -114,6 +115,10 @@ model NcmNode {
   sourceId     String    @map("source_id")
   /// Última carga em que o código constava na fonte.
   lastSeenRunId String?  @map("last_seen_run_id")
+  /// Descrições do nó e dos seus ancestrais, sem acento e em minúsculas (busca aproximada).
+  textoBusca   String?   @map("texto_busca")
+  /// Vetor de busca textual (descrição própria com peso A, ancestrais com peso B).
+  busca        Unsupported("tsvector")?
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
@@ -121,6 +126,8 @@ model NcmNode {
 
   @@index([parentCodigo])
   @@index([nivel])
+  @@index([busca], type: Gin)
+  @@index([textoBusca(ops: raw("gin_trgm_ops"))], type: Gin)
   @@map("ncm_node")
 }
 

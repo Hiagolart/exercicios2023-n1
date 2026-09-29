@@ -7,6 +7,7 @@ import {
 import {
   failIngestionRun,
   finishIngestionRun,
+  refreshNcmSearch,
   startIngestionRun,
   upsertDataSource,
   upsertNcmNodes,
@@ -41,6 +42,7 @@ export async function runNcmIngestion(
       valid.map((r) => ({ ...r, parentCodigo: parents.get(r.codigo) ?? null })),
       { sourceId: provider.source.id, runId },
     );
+    await refreshNcmSearch(db);
 
     const report: IngestionReport = {
       sourceId: provider.source.id,

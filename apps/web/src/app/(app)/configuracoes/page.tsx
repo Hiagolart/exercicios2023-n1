@@ -8,7 +8,7 @@ export default function SettingsPage() {
     <PlannedFeature
       title="Configurações"
       description="Conta, preferências e administração das cargas de dados."
-      phase="Fase 3 (cargas) e Fase 7 (preferências)"
+      phase="Fase 3 (cargas) e Fase 9 (preferências)"
       items={[
         "Relatórios das cargas de dados (somente administradores)",
         "Envio de arquivos CSV/JSON para importação",
