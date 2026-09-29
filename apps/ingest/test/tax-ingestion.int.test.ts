@@ -20,11 +20,7 @@ beforeEach(async () => {
 
 describe("runTaxIngestion", () => {
   it("grava alíquotas e destaques com o relatório da carga", async () => {
-    const provider = new OfficialTableProvider(
-      "IPI",
-      await writeSheet(TIPI_ROWS),
-      "Decreto de teste",
-    );
+    const provider = new OfficialTableProvider(await writeSheet(TIPI_ROWS), "Decreto de teste");
     const report = await runTaxIngestion(db, provider, { referencia: d("2026-09-01") });
 
     expect(report).toMatchObject({ processados: 5, inseridos: 3, rejeitados: 1, ignorados: 1 });
@@ -48,18 +44,18 @@ describe("runTaxIngestion", () => {
       ),
     );
 
-    await runTaxIngestion(db, new OfficialTableProvider("IPI", v1, null), {
+    await runTaxIngestion(db, new OfficialTableProvider(v1, null), {
       referencia: d("2026-01-10"),
     });
-    const repeat = await runTaxIngestion(db, new OfficialTableProvider("IPI", v1, null), {
+    const repeat = await runTaxIngestion(db, new OfficialTableProvider(v1, null), {
       referencia: d("2026-05-10"),
     });
-    expect(repeat).toMatchObject({ inseridos: 1, atualizados: 0, inalterados: 2 });
+    expect(repeat).toMatchObject({ inseridos: 0, atualizados: 0, inalterados: 3 });
 
-    const changed = await runTaxIngestion(db, new OfficialTableProvider("IPI", v2, null), {
+    const changed = await runTaxIngestion(db, new OfficialTableProvider(v2, null), {
       referencia: d("2026-09-01"),
     });
-    expect(changed).toMatchObject({ atualizados: 1, inalterados: 1 });
+    expect(changed).toMatchObject({ inseridos: 1, atualizados: 1, inalterados: 2 });
 
     const history = (await listRatesForNcm(db, "98011000")).map((r) => ({
       aliquota: r.aliquota,

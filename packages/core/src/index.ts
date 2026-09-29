@@ -15,3 +15,4 @@ export * from "./tax/history";
 export * from "./tax/parse-rate";
 export * from "./tax/simulator";
 export * from "./tax/records";
+export * from "./tax/gecex";

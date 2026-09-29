@@ -16,16 +16,7 @@ export const TIPI_SOURCE: SourceMetadata = {
   isMock: false,
 };
 
-export const TEC_SOURCE: SourceMetadata = {
-  id: "camex-tec",
-  nome: "Camex — Tarifa Externa Comum (Res. Gecex 272/2021, Anexo I)",
-  url: "https://www.gov.br/mdic/pt-br/assuntos/camex/se-camex/strat/tarifas/vigentes",
-  licenca: null,
-  descricao: "Alíquotas do Imposto de Importação por NCM.",
-  isMock: false,
-};
-
-const normalize = (v: unknown) =>
+export const normalizeHeader = (v: unknown) =>
   String(v ?? "")
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
@@ -46,7 +37,7 @@ export interface ColumnMap {
  */
 export function detectColumns(rows: unknown[][], rateHeaders: string[]): ColumnMap | null {
   for (let i = 0; i < Math.min(rows.length, 60); i++) {
-    const cells = (rows[i] ?? []).map(normalize);
+    const cells = (rows[i] ?? []).map(normalizeHeader);
     const ncm = cells.findIndex((c) => c === "NCM" || c.startsWith("NCM "));
     const aliquota = cells.findIndex((c) =>
       rateHeaders.some((h) => c === h || c.startsWith(`${h} `) || c.startsWith(`${h}(`)),
@@ -66,7 +57,7 @@ export function detectColumns(rows: unknown[][], rateHeaders: string[]): ColumnM
   return null;
 }
 
-function cellValue(value: ExcelJS.CellValue): unknown {
+export function cellValue(value: ExcelJS.CellValue): unknown {
   if (value && typeof value === "object") {
     if ("result" in value) return value.result;
     if ("richText" in value) return value.richText.map((t) => t.text).join("");
@@ -75,39 +66,48 @@ function cellValue(value: ExcelJS.CellValue): unknown {
   return value;
 }
 
-async function readSheetRows(path: string): Promise<unknown[][]> {
+export interface SheetRows {
+  name: string;
+  rows: unknown[][];
+}
+
+/** Lê todas as abas de uma planilha como matrizes de valores. */
+export async function readWorkbook(path: string): Promise<SheetRows[]> {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(path);
-  const sheet = workbook.worksheets[0];
-  if (!sheet) throw new Error("A planilha não tem abas.");
-  const rows: unknown[][] = [];
-  sheet.eachRow({ includeEmpty: true }, (row, index) => {
-    const values = Array.isArray(row.values) ? row.values.slice(1) : [];
-    rows[index - 1] = values.map((v) => cellValue(v as ExcelJS.CellValue));
+  return workbook.worksheets.map((sheet) => {
+    const rows: unknown[][] = [];
+    sheet.eachRow({ includeEmpty: true }, (row, index) => {
+      const values = Array.isArray(row.values) ? row.values.slice(1) : [];
+      rows[index - 1] = values.map((v) => cellValue(v as ExcelJS.CellValue));
+    });
+    return { name: sheet.name, rows: Array.from(rows, (r) => r ?? []) };
   });
-  return rows.map((r) => r ?? []);
+}
+
+async function readSheetRows(path: string): Promise<unknown[][]> {
+  const [first] = await readWorkbook(path);
+  if (!first) throw new Error("A planilha não tem abas.");
+  return first.rows;
 }
 
 /**
- * Provedor para as planilhas oficiais da TIPI (IPI) e da TEC (II).
- * O layout ainda precisa ser conferido com os arquivos reais (Fase 0);
- * a detecção de cabeçalho tolera variações de posição e de grafia.
+ * Provedor para a TIPI (planilha "Tabela Completa" da Receita Federal):
+ * colunas NCM / EX / DESCRIÇÃO / ALÍQUOTA (%), com o cabeçalho após linhas de título.
  */
 export class OfficialTableProvider implements DataProvider<TaxDataRecord> {
   readonly kind = "tariffs" as const;
-  readonly source: SourceMetadata;
+  readonly source = TIPI_SOURCE;
+  private readonly tributo = "IPI" as const;
 
   constructor(
-    private readonly tributo: "II" | "IPI",
     private readonly path: string,
     private readonly atoLegal: string | null,
-  ) {
-    this.source = tributo === "IPI" ? TIPI_SOURCE : TEC_SOURCE;
-  }
+  ) {}
 
   async read(): Promise<ProviderBatch> {
     const rows = await readSheetRows(this.path);
-    const headers = this.tributo === "IPI" ? ["ALIQUOTA"] : ["TEC", "ALIQUOTA", "II"];
+    const headers = ["ALIQUOTA"];
     const map = detectColumns(rows, headers);
     if (!map) {
       throw new Error(

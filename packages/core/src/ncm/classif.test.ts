@@ -14,6 +14,16 @@ describe("parseClassifPayload", () => {
     expect(result.value.dataUltimaAlteracao?.toISOString()).toBe("2026-09-15T00:00:00.000Z");
   });
 
+  it("lê a data no formato do arquivo oficial", () => {
+    const result = parseClassifPayload({
+      Data_Ultima_Atualizacao_NCM: "Vigente em 29/09/2026",
+      Nomenclaturas: [],
+    });
+    expect(result.ok && result.value.dataUltimaAlteracao?.toISOString()).toBe(
+      "2026-09-29T00:00:00.000Z",
+    );
+  });
+
   it("aceita lista na raiz", () => {
     const result = parseClassifPayload([{ codigo: "01" }]);
     expect(result.ok && result.value.dataUltimaAlteracao).toBeNull();

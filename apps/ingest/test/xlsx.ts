@@ -25,3 +25,18 @@ export const TIPI_ROWS: (string | number | null)[][] = [
   ["9801.90.00", null, "- Outros", "NT"],
   ["9801.20.00", null, "- Linha com erro", "abc"],
 ];
+
+/** Gera uma planilha com várias abas. */
+export async function writeWorkbook(
+  sheets: { name: string; rows: unknown[][] }[],
+): Promise<string> {
+  const workbook = new ExcelJS.Workbook();
+  for (const sheet of sheets) {
+    const ws = workbook.addWorksheet(sheet.name);
+    for (const row of sheet.rows) ws.addRow(row);
+  }
+  const dir = await mkdtemp(join(tmpdir(), "comex-xlsx-"));
+  const path = join(dir, "anexos.xlsx");
+  await workbook.xlsx.writeFile(path);
+  return path;
+}

@@ -11,14 +11,16 @@ export function isInForce(
   return true;
 }
 
-export interface ResolvedRate {
+export interface ResolvedRate<R extends RateRecord = RateRecord> {
   tributo: Tributo;
-  /** Alíquota aplicável, já considerando exceções. `null` se não houver dado. */
-  aplicavel: RateRecord | null;
-  /** Alíquota geral do código, mesmo quando substituída por exceção. */
-  geral: RateRecord | null;
-  /** Exceções vigentes para o código (a primeira é a aplicada). */
-  excecoes: RateRecord[];
+  /** Alíquota aplicável, já considerando exceções sem quota. `null` se não houver dado. */
+  aplicavel: R | null;
+  /** Alíquota geral do código (ou regra geral), mesmo quando substituída por exceção. */
+  geral: R | null;
+  /** Exceções vigentes sem quota (a primeira é a aplicada). */
+  excecoes: R[];
+  /** Exceções vigentes limitadas a uma quota: valem só para o volume da quota. */
+  comQuota: R[];
 }
 
 function latestStart(a: RateRecord, b: RateRecord): number {
@@ -27,22 +29,26 @@ function latestStart(a: RateRecord, b: RateRecord): number {
 
 /**
  * Determina, para cada tributo, a alíquota aplicável a uma NCM em uma data.
- * Precedência: exceção vigente > alíquota geral do código > regra geral.
+ * Precedência: exceção vigente sem quota > alíquota geral do código > regra geral.
  * Havendo mais de um registro vigente do mesmo tipo, vale o de início mais recente.
  */
-export function resolveRates(
-  records: RateRecord[],
+export function resolveRates<R extends RateRecord>(
+  records: R[],
   ncm: string,
   date: Date = new Date(),
-): ResolvedRate[] {
+): ResolvedRate<R>[] {
   const inForce = records.filter((r) => isInForce(r, date) && (r.ncm === ncm || r.ncm === null));
   return TRIBUTOS.map((tributo) => {
     const own = inForce.filter((r) => r.tributo === tributo);
-    const excecoes = own.filter((r) => r.regime === "excecao" && r.ncm === ncm).sort(latestStart);
+    const allExceptions = own
+      .filter((r) => r.regime === "excecao" && r.ncm === ncm)
+      .sort(latestStart);
+    const excecoes = allExceptions.filter((r) => !r.quota);
+    const comQuota = allExceptions.filter((r) => r.quota);
     const geral =
       own.filter((r) => r.regime === "geral" && r.ncm === ncm).sort(latestStart)[0] ??
       own.filter((r) => r.regime === "regra_geral").sort(latestStart)[0] ??
       null;
-    return { tributo, aplicavel: excecoes[0] ?? geral, geral, excecoes };
+    return { tributo, aplicavel: excecoes[0] ?? geral, geral, excecoes, comQuota };
   });
 }

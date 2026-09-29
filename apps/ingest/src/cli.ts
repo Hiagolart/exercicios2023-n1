@@ -2,11 +2,12 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { parseSourceDate, type SourceMetadata } from "@comex/core";
-import { createPrismaClient } from "@comex/db";
+import { createPrismaClient, refreshNcmSearch, removeMockData } from "@comex/db";
 import { runNcmIngestion } from "./pipeline/ncm";
 import { runTaxIngestion } from "./pipeline/tax";
 import { ClassifNcmProvider } from "./providers/classif";
 import { MockNcmProvider } from "./providers/mock";
+import { GecexWorkbookProvider } from "./providers/gecex-xlsx";
 import { OfficialTableProvider } from "./providers/official-xlsx";
 import { fileReader, httpReader } from "./providers/readers";
 import { MockTaxProvider } from "./providers/tax-mock";
@@ -21,10 +22,13 @@ const USAGE = `Uso:
 
   Tributos
     pnpm ingest tributos --source tipi --file <xlsx> [--ato "<ato legal>"] [--referencia aaaa-mm-dd]
-    pnpm ingest tributos --source tec  --file <xlsx> [--ato "<ato legal>"] [--referencia aaaa-mm-dd]
+    pnpm ingest tributos --source tec  --file <xlsx> [--referencia aaaa-mm-dd]   (Anexos I a X da Res. Gecex 272/2021)
     pnpm ingest tributos --source legislacao        Regras gerais (data/legislacao/regras-gerais.csv)
     pnpm ingest tributos --source arquivo --file <csv|json> --fonte "<nome da fonte>" [--fonte-url <url>]
-    pnpm ingest tributos --source mock              Dados FICTÍCIOS (somente desenvolvimento)`;
+    pnpm ingest tributos --source mock              Dados FICTÍCIOS (somente desenvolvimento)
+
+  Manutenção
+    pnpm ingest limpar-ficticios                    Remove todos os dados fictícios do banco`;
 
 const DEFAULT_CLASSIF_URL =
   "https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json?perfil=PUBLICO";
@@ -95,14 +99,16 @@ async function ingestNcm(opts: Options) {
 
 async function ingestTax(opts: Options) {
   switch (opts.source) {
-    case "tipi":
-    case "tec": {
+    case "tipi": {
       const file = requireFile(opts.file);
-      const tributo = opts.source === "tipi" ? "IPI" : "II";
       return {
-        provider: new OfficialTableProvider(tributo, file, opts.ato ?? null),
+        provider: new OfficialTableProvider(file, opts.ato ?? null),
         fileHash: await sha256(file),
       };
+    }
+    case "tec": {
+      const file = requireFile(opts.file);
+      return { provider: new GecexWorkbookProvider(file), fileHash: await sha256(file) };
     }
     case "legislacao": {
       const file = new URL("../../../data/legislacao/regras-gerais.csv", import.meta.url).pathname;
@@ -145,6 +151,19 @@ async function main(): Promise<void> {
     },
   });
   const command = positionals[0];
+  if (command === "limpar-ficticios") {
+    const db = createPrismaClient();
+    try {
+      const removed = await removeMockData(db);
+      await refreshNcmSearch(db);
+      console.log(
+        `Removidos: ${removed.fontes} fonte(s), ${removed.ncm} código(s) NCM, ${removed.aliquotas} alíquota(s), ${removed.destaques} destaque(s).`,
+      );
+    } finally {
+      await db.$disconnect();
+    }
+    return;
+  }
   if (command !== "ncm" && command !== "tributos") {
     console.log(USAGE);
     process.exitCode = 1;

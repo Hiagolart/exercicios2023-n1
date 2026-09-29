@@ -22,6 +22,7 @@ const base = {
   vigenciaInicio: null,
   vigenciaFim: null,
   observacao: null,
+  quota: null,
 } as const;
 const ATO = "[FICTÍCIO] Ato de demonstração";
 
@@ -58,10 +59,14 @@ const MOCK_RECORDS: TaxDataRecord[] = [
       tributo: "II",
       numero: "001",
       descricao: "[FICTÍCIO] Equipamento de demonstração com capacidade acima de 5 t",
+      tipo: "ad_valorem",
       aliquota: 0,
       vigenciaInicio: new Date(Date.UTC(2026, 2, 1)),
       vigenciaFim: new Date(Date.UTC(2027, 11, 31)),
       atoLegal: ATO,
+      lista: null,
+      quota: null,
+      observacao: null,
     },
   },
 ];

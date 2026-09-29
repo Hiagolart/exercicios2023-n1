@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatNcmCode,
+  parseNcmCell,
   isFullNcmCode,
   isValidNcmCodeLength,
   ncmLevelOf,
@@ -62,5 +63,17 @@ describe("ncmStructureOf / isFullNcmCode", () => {
   });
   it("retorna null para níveis inexistentes", () => {
     expect(ncmStructureOf("84")).toEqual({ capitulo: "84", posicao: null, subposicao: null });
+  });
+});
+
+describe("parseNcmCell", () => {
+  it("aceita códigos com pontos e espaços", () => {
+    expect(parseNcmCell("8427.10.90")).toBe("84271090");
+    expect(parseNcmCell(" 84.27 ")).toBe("8427");
+  });
+  it("recusa textos que contêm algarismos", () => {
+    expect(parseNcmCell("Nota 1.- teor de 5 %, 3 % e 10 %, 1 %")).toBeNull();
+    expect(parseNcmCell("Capítulo 84")).toBeNull();
+    expect(parseNcmCell(null)).toBeNull();
   });
 });

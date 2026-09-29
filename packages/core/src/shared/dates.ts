@@ -10,9 +10,15 @@ const OPEN_ENDED_YEAR = 9999;
  */
 export function parseSourceDate(value: unknown): Date | null | undefined {
   if (value === null || value === undefined) return null;
+  // Planilhas (xlsx) entregam datas como objetos Date à meia-noite UTC.
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime())) return undefined;
+    return new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()));
+  }
   if (typeof value !== "string") return undefined;
   const text = value.trim();
-  if (text === "") return null;
+  // "-" é usado nas tabelas oficiais para "sem data".
+  if (text === "" || text === "-") return null;
 
   const br = BR_DATE.exec(text);
   const iso = ISO_DATE.exec(text);
@@ -30,4 +36,10 @@ export function parseSourceDate(value: unknown): Date | null | undefined {
 export function normalizeEndDate(date: Date | null): Date | null {
   if (date && date.getUTCFullYear() >= OPEN_ENDED_YEAR) return null;
   return date;
+}
+
+/** Extrai a primeira data dd/mm/aaaa de um texto (ex.: "Vigente em 29/09/2026"). */
+export function findDateInText(text: string): Date | null {
+  const match = /(\d{2}\/\d{2}\/\d{4})/.exec(text);
+  return match?.[1] ? (parseSourceDate(match[1]) ?? null) : null;
 }

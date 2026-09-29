@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseOfficialTableRow, parseTaxTemplateRow } from "./records";
+import { normalizeExNumber, parseOfficialTableRow, parseTaxTemplateRow } from "./records";
 
 describe("parseTaxTemplateRow", () => {
   it("lê alíquota geral de uma NCM", () => {
@@ -121,7 +121,32 @@ describe("parseOfficialTableRow", () => {
     });
   });
 
+  it("aceita destaque Ex não tributado (NT) no IPI", () => {
+    expect(
+      parseOfficialTableRow(
+        { ncm: "9801.10.00", ex: 1, descricao: "Variante", aliquota: "NT" },
+        ctx,
+      ),
+    ).toMatchObject({
+      value: { kind: "destaque", destaque: { tipo: "nao_tributado", aliquota: null } },
+    });
+  });
+
   it("rejeita alíquota ilegível", () => {
     expect(parseOfficialTableRow({ ncm: "9801.10.00", aliquota: "x" }, ctx).ok).toBe(false);
+  });
+});
+
+describe("normalizeExNumber", () => {
+  it.each([
+    ["1", "01"],
+    [4, "04"],
+    ["Ex 01", "01"],
+    ["Ex  04", "04"],
+    ["001", "001"],
+    ["-", null],
+    [null, null],
+  ])("%s → %s", (raw, expected) => {
+    expect(normalizeExNumber(raw)).toBe(expected);
   });
 });

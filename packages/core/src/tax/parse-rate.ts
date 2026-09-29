@@ -1,5 +1,17 @@
 import type { TipoAliquota } from "./types";
 
+/** Casas decimais armazenadas para alíquotas (mesma precisão do banco). */
+const RATE_DECIMALS = 4;
+
+/**
+ * Remove resíduos de ponto flutuante vindos de planilhas (ex.: 3.9000000000000004 → 3.9),
+ * que de outra forma pareceriam mudanças de alíquota entre cargas.
+ */
+export function roundRate(value: number): number {
+  const factor = 10 ** RATE_DECIMALS;
+  return Math.round(value * factor) / factor;
+}
+
 export type ParsedRateValue = { tipo: TipoAliquota; aliquota: number | null } | { erro: string };
 
 /**
@@ -9,7 +21,7 @@ export type ParsedRateValue = { tipo: TipoAliquota; aliquota: number | null } | 
 export function parseRateValue(raw: unknown): ParsedRateValue {
   if (typeof raw === "number") {
     return Number.isFinite(raw) && raw >= 0 && raw <= 1000
-      ? { tipo: "ad_valorem", aliquota: raw }
+      ? { tipo: "ad_valorem", aliquota: roundRate(raw) }
       : { erro: `Alíquota fora do intervalo: ${raw}.` };
   }
   if (typeof raw !== "string") return { erro: "Alíquota ausente." };

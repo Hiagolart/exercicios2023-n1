@@ -14,6 +14,7 @@ const rate = (partial: Partial<RateRecord>): RateRecord => ({
   vigenciaFim: null,
   atoLegal: null,
   observacao: null,
+  quota: null,
   ...partial,
 });
 
@@ -57,6 +58,16 @@ describe("resolveRates", () => {
     expect(pis?.aplicavel?.aliquota).toBe(2.1);
     const outro = resolveRates(records, "98019000", today).find((r) => r.tributo === "PIS");
     expect(outro?.aplicavel?.aliquota).toBe(0);
+  });
+
+  it("não trata exceção com quota como a alíquota aplicável", () => {
+    const records = [
+      rate({ aliquota: 14 }),
+      rate({ regime: "excecao", lista: "DCC", aliquota: 10.8, quota: "100 kg" }),
+    ];
+    const ii = resolveRates(records, "98011000", today)[0];
+    expect(ii?.aplicavel?.aliquota).toBe(14);
+    expect(ii?.comQuota.map((r) => r.aliquota)).toEqual([10.8]);
   });
 
   it("escolhe o registro de início mais recente e sinaliza ausência de dados", () => {

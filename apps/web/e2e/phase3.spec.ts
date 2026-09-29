@@ -11,12 +11,12 @@ test("tributos da NCM, histórico e simulador", async ({ page }, testInfo) => {
     has: page.getByRole("heading", { name: "Tributos na importação" }),
   });
   await expect(panel.getByRole("status")).toContainText("inventadas");
-  const ii = panel.getByRole("row", { name: /Imposto de Importação/ });
+  const ii = panel.getByRole("row", { name: /^Imposto de Importação/ });
   await expect(ii).toContainText("2%");
   await expect(ii).toContainText("Alíquota da NCM: 14%");
   await expect(ii).toContainText("Exceção: [FICTÍCIO] LETEC");
-  await expect(panel.getByRole("row", { name: /Cofins-Importação/ })).toContainText("9,65%");
-  await expect(panel.getByRole("row", { name: /Cofins-Importação/ })).toContainText("Regra geral");
+  await expect(panel.getByRole("row", { name: /^Cofins-Importação/ })).toContainText("9,65%");
+  await expect(panel.getByRole("row", { name: /^Cofins-Importação/ })).toContainText("Regra geral");
 
   await page.getByRole("link", { name: "Histórico de alíquotas" }).click();
   await expect(page.getByRole("heading", { name: "Histórico de alíquotas" })).toBeVisible();

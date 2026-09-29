@@ -178,6 +178,8 @@ model Aliquota {
   vigenciaInferida Boolean        @default(false) @map("vigencia_inferida")
   atoLegal         String?        @map("ato_legal")
   observacao       String?
+  /// Quota à qual a alíquota se limita; nulo quando vale para toda a importação.
+  quota            String?
   sourceId         String         @map("source_id")
   ingestionRunId   String?        @map("ingestion_run_id")
   createdAt        DateTime       @default(now()) @map("created_at")
@@ -192,19 +194,24 @@ model Aliquota {
 
 /// Destaque "Ex": ex-tarifário do II ou Ex da TIPI, com alíquota própria para um produto específico.
 model DestaqueEx {
-  id             String    @id @default(cuid())
-  ncmCodigo      String    @map("ncm_codigo") @db.VarChar(8)
+  id             String       @id @default(cuid())
+  ncmCodigo      String       @map("ncm_codigo") @db.VarChar(8)
   tributo        Tributo
   numero         String
   descricao      String
-  aliquota       Decimal   @db.Decimal(9, 4)
-  vigenciaInicio DateTime? @map("vigencia_inicio") @db.Date
-  vigenciaFim    DateTime? @map("vigencia_fim") @db.Date
-  atoLegal       String?   @map("ato_legal")
-  sourceId       String    @map("source_id")
-  ingestionRunId String?   @map("ingestion_run_id")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  tipo           TipoAliquota @default(ad_valorem)
+  aliquota       Decimal?     @db.Decimal(9, 4)
+  vigenciaInicio DateTime?    @map("vigencia_inicio") @db.Date
+  vigenciaFim    DateTime?    @map("vigencia_fim") @db.Date
+  atoLegal       String?      @map("ato_legal")
+  /// Lista de origem (ex.: "LETEC (Anexo V)"); vazio para ex-tarifário comum ou Ex da TIPI.
+  lista          String       @default("")
+  quota          String?
+  observacao     String?
+  sourceId       String       @map("source_id")
+  ingestionRunId String?      @map("ingestion_run_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
 
   source DataSource @relation(fields: [sourceId], references: [id])
 

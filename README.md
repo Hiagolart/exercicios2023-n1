@@ -13,8 +13,7 @@ equivalentes às de um sistema de consulta aduaneira como o TECwin, está em
 
 ## Estado atual
 
-**Fases 1 (Fundação), 2 (Pesquisa NCM) e 3 (Tributação) concluídas; as tabelas oficiais ainda não foram carregadas.** A Fase 0 (validação com download real das fontes oficiais) está
-pendente de liberação de rede no ambiente de desenvolvimento.
+**Fases 0 a 3 concluídas**, com a nomenclatura, a TIPI e os Anexos da Res. Gecex 272/2021 oficiais carregados (veja [`docs/FONTES_DE_DADOS.md`](docs/FONTES_DE_DADOS.md)).
 
 | Módulo                                                              | Situação                           |
 | ------------------------------------------------------------------- | ---------------------------------- |
@@ -67,9 +66,18 @@ Sem acesso à rede das fontes oficiais, há duas alternativas:
 Tributos: veja [`docs/IMPORTACAO_TRIBUTOS.md`](docs/IMPORTACAO_TRIBUTOS.md).
 
 ```bash
+pnpm ingest ncm --source file --file ../../data/raw/Tabela_NCM_Vigente_20260929.json
+pnpm ingest tributos --source tipi --file ../../data/raw/tipi.xlsx --ato "Decreto nº 11.158/2022 (TIPI) e alterações"
+pnpm ingest tributos --source tec --file ../../data/raw/25-09-2026-anexos-i-a-x-resolucao-gecex-272-21.xlsx --referencia 2026-09-25
 pnpm ingest tributos --source legislacao             # regras gerais (PIS/Cofins, CBS/IBS)
-pnpm ingest tributos --source tipi --file tipi.xlsx  # IPI
-pnpm ingest tributos --source tec --file tec.xlsx    # II
+pnpm ingest limpar-ficticios                         # remove dados fictícios de desenvolvimento
+```
+
+Os caminhos de `--file` são relativos a `apps/ingest`. Os arquivos oficiais ficam em `data/raw/`
+(fora do Git).
+
+```bash
+
 ```
 
 ## Verificações
@@ -80,7 +88,7 @@ pnpm typecheck
 pnpm test                 # testes unitários
 pnpm test:integration     # exige TEST_DATABASE_URL (banco dedicado a testes)
 pnpm build
-pnpm test:e2e             # Playwright; exige banco com a carga fictícia
+pnpm test:e2e             # Playwright; use um banco separado com as cargas fictícias (DATABASE_URL=.../comex_e2e)
 pnpm check                # lint + typecheck + test + build
 ```
 

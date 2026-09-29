@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { normalizeEndDate, parseSourceDate } from "../shared/dates";
+import { findDateInText, normalizeEndDate, parseSourceDate } from "../shared/dates";
 import { err, ok, type Result } from "../shared/result";
 import type { ValidationIssue } from "../data-provider/types";
 import { isValidNcmCodeLength, ncmLevelOf, normalizeNcmCode } from "./code";
@@ -67,7 +67,11 @@ export function parseClassifPayload(json: unknown): Result<ClassifPayload, strin
     );
   }
   const rawDate = pick(json, ROOT_DATE_KEYS);
-  const date = typeof rawDate === "string" ? parseSourceDate(rawDate.split(" ")[0]) : null;
+  // O arquivo oficial traz textos como "Vigente em 29/09/2026".
+  const date =
+    typeof rawDate === "string"
+      ? (parseSourceDate(rawDate.split(" ")[0]) ?? findDateInText(rawDate))
+      : null;
   return ok({ dataUltimaAlteracao: date ?? null, records: list });
 }
 

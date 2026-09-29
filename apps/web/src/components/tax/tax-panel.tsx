@@ -7,7 +7,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import type { TaxView } from "@/lib/data/taxes";
 import { formatDate } from "@/lib/format";
-import { formatPercent, formatRate, rateOrigin } from "@/lib/tax-format";
+import { formatRate, rateOrigin } from "@/lib/tax-format";
 
 function vigencia(r: { vigenciaInicio: Date | null; vigenciaFim: Date | null }): string {
   const inicio = formatDate(r.vigenciaInicio);
@@ -17,9 +17,10 @@ function vigencia(r: { vigenciaInicio: Date | null; vigenciaFim: Date | null }):
   return `${inicio ?? "—"} a ${fim}`;
 }
 
-const DESTAQUE_LABEL = { II: "Ex-tarifário (II)", IPI: "Ex da TIPI (IPI)" } as const;
+const DESTAQUE_LABEL = { II: "Destaque Ex do II", IPI: "Ex da TIPI (IPI)" } as const;
 
 function Destaques({ items }: { items: StoredDestaque[] }) {
+  const today = new Date();
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-sm font-semibold">Destaques Ex</h3>
@@ -29,14 +30,25 @@ function Destaques({ items }: { items: StoredDestaque[] }) {
             key={ex.id}
             className="flex flex-col gap-1 px-4 py-3 text-sm sm:flex-row sm:items-start sm:gap-4"
           >
-            <div className="flex w-40 shrink-0 flex-col gap-1">
+            <div className="flex w-44 shrink-0 flex-col items-start gap-1">
               <span className="font-mono">Ex {ex.numero}</span>
               <span className="text-xs text-muted">{DESTAQUE_LABEL[ex.tributo]}</span>
+              {ex.lista ? <Badge tone="warn">{ex.lista}</Badge> : null}
             </div>
-            <p className="min-w-0 flex-1">{ex.descricao}</p>
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <p>{ex.descricao}</p>
+              {ex.quota ? (
+                <p className="text-xs text-muted">Limitado à quota de {ex.quota}.</p>
+              ) : null}
+              {ex.observacao ? <p className="text-xs text-muted">{ex.observacao}</p> : null}
+              {ex.atoLegal ? <p className="text-xs text-muted">{ex.atoLegal}</p> : null}
+            </div>
             <div className="flex shrink-0 flex-col items-start gap-1 sm:items-end">
-              <span className="font-mono tabular-nums">{formatPercent(ex.aliquota)}</span>
+              <span className="font-mono tabular-nums">{formatRate(ex)}</span>
               <span className="text-xs text-muted">{vigencia(ex)}</span>
+              {ex.vigenciaInicio && ex.vigenciaInicio > today ? (
+                <Badge>Vigência futura</Badge>
+              ) : null}
             </div>
           </li>
         ))}
@@ -48,11 +60,6 @@ function Destaques({ items }: { items: StoredDestaque[] }) {
 /** Tributos vigentes da NCM, com origem, vigência, fundamento legal e fonte. */
 export function TaxPanel({ ncm, view }: { ncm: string; view: TaxView }) {
   const hasAny = view.vigentes.some((v) => v.aplicavel);
-  const notes = [
-    ...new Set(
-      view.vigentes.flatMap((v) => (v.aplicavel?.observacao ? [v.aplicavel.observacao] : [])),
-    ),
-  ];
 
   return (
     <Section
@@ -88,9 +95,9 @@ export function TaxPanel({ ncm, view }: { ncm: string; view: TaxView }) {
                 <th className="px-5 py-2 font-medium">Fonte</th>
               </tr>
             </thead>
-            <tbody>
-              {view.vigentes.map(({ tributo, aplicavel, geral, excecoes }) => (
-                <tr key={tributo} className="border-b border-line align-top last:border-0">
+            {view.vigentes.map(({ tributo, aplicavel, geral, excecoes, comQuota }) => (
+              <tbody key={tributo} className="border-b border-line last:border-0">
+                <tr className="align-top">
                   <td className="px-5 py-3">{TRIBUTO_LABELS[tributo]}</td>
                   <td className="px-3 py-3">
                     <span className={aplicavel ? "font-mono tabular-nums" : "text-muted"}>
@@ -99,6 +106,7 @@ export function TaxPanel({ ncm, view }: { ncm: string; view: TaxView }) {
                     {excecoes.length > 0 && geral ? (
                       <span className="mt-1 block text-xs text-muted">
                         Alíquota da NCM: {formatRate(geral)}
+                        {geral.observacao ? ` · ${geral.observacao}` : ""}
                       </span>
                     ) : null}
                   </td>
@@ -139,20 +147,30 @@ export function TaxPanel({ ncm, view }: { ncm: string; view: TaxView }) {
                     )}
                   </td>
                 </tr>
-              ))}
-            </tbody>
+                {comQuota.map((q) => (
+                  <tr key={`${q.lista}-${q.vigenciaInicio?.toISOString()}-${q.aliquota}`}>
+                    <td />
+                    <td colSpan={5} className="px-3 pb-2 text-xs text-muted">
+                      <span className="font-mono tabular-nums text-fg">{formatRate(q)}</span> dentro
+                      da quota de {q.quota} · {q.lista} · {vigencia(q)}
+                      {q.atoLegal ? ` · ${q.atoLegal}` : ""}
+                    </td>
+                  </tr>
+                ))}
+                {aplicavel?.observacao ? (
+                  <tr>
+                    <td />
+                    <td colSpan={5} className="px-3 pb-3 text-xs text-muted">
+                      {aplicavel.observacao}
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            ))}
           </table>
         </div>
 
         {view.destaques.length > 0 ? <Destaques items={view.destaques} /> : null}
-
-        {notes.length > 0 ? (
-          <ul className="flex flex-col gap-1 text-xs text-muted">
-            {notes.map((n) => (
-              <li key={n}>• {n}</li>
-            ))}
-          </ul>
-        ) : null}
 
         <div className="flex flex-wrap items-center gap-3">
           <ButtonLink href={`/simulador?ncm=${ncm}`}>Simular tributos</ButtonLink>

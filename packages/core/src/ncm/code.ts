@@ -23,6 +23,19 @@ export function normalizeNcmCode(input: string): string {
   return input.replace(/\D/g, "");
 }
 
+/**
+ * Lê um código NCM de uma célula de planilha. Só aceita células formadas por
+ * dígitos, pontos e espaços: textos (notas, títulos) que contenham algarismos
+ * não podem ser confundidos com códigos.
+ */
+export function parseNcmCell(raw: unknown): string | null {
+  if (raw === null || raw === undefined) return null;
+  const text = String(raw).trim();
+  if (!/^\d[\d.\s]*$/.test(text)) return null;
+  const digits = normalizeNcmCode(text);
+  return isValidNcmCodeLength(digits) ? digits : null;
+}
+
 /** Indica se os dígitos formam um nível válido da NCM. */
 export function isValidNcmCodeLength(digits: string): boolean {
   return /^\d+$/.test(digits) && VALID_LENGTHS.has(digits.length);

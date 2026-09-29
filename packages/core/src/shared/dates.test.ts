@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeEndDate, parseSourceDate } from "./dates";
+import { findDateInText, normalizeEndDate, parseSourceDate } from "./dates";
 
 describe("parseSourceDate", () => {
   it("lê datas brasileiras e ISO", () => {
@@ -20,5 +20,19 @@ describe("normalizeEndDate", () => {
     expect(normalizeEndDate(new Date(Date.UTC(9999, 11, 31)))).toBeNull();
     const date = new Date(Date.UTC(2026, 0, 1));
     expect(normalizeEndDate(date)).toBe(date);
+  });
+});
+
+describe("datas vindas de planilhas e textos", () => {
+  it("aceita objetos Date e trata '-' como ausência", () => {
+    expect(parseSourceDate(new Date("2026-07-01T00:00:00.000Z"))?.toISOString()).toBe(
+      "2026-07-01T00:00:00.000Z",
+    );
+    expect(parseSourceDate("-")).toBeNull();
+    expect(parseSourceDate(new Date("x"))).toBeUndefined();
+  });
+  it("encontra a data em um texto", () => {
+    expect(findDateInText("Vigente em 29/09/2026")?.toISOString()).toBe("2026-09-29T00:00:00.000Z");
+    expect(findDateInText("sem data")).toBeNull();
   });
 });

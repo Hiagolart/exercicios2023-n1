@@ -8,11 +8,7 @@ import {
   type StoredRate,
 } from "@comex/db";
 
-export interface ResolvedStoredRate extends Omit<ResolvedRate, "aplicavel" | "geral" | "excecoes"> {
-  aplicavel: StoredRate | null;
-  geral: StoredRate | null;
-  excecoes: StoredRate[];
-}
+export type ResolvedStoredRate = ResolvedRate<StoredRate>;
 
 export interface TaxView {
   vigentes: ResolvedStoredRate[];
@@ -28,10 +24,11 @@ export async function getTaxView(ncm: string, date: Date = new Date()): Promise<
     listRatesForNcm(db, ncm),
     listDestaquesForNcm(db, ncm),
   ]);
-  // resolveRates devolve os mesmos objetos recebidos, então os metadados são preservados.
-  const vigentes = resolveRates(historico, ncm, date) as ResolvedStoredRate[];
+  const vigentes = resolveRates(historico, ncm, date);
+  // Destaques encerrados ficam só no histórico; aqui entram os vigentes e os futuros.
+  const destaquesAtuais = destaques.filter((d) => !d.vigenciaFim || d.vigenciaFim >= date);
   const hasMock = historico.some((r) => r.source.isMock) || destaques.some((d) => d.source.isMock);
-  return { vigentes, historico, destaques, hasMock };
+  return { vigentes, historico, destaques: destaquesAtuais, hasMock };
 }
 
 /** Alíquotas usadas para pré-preencher o simulador. */

@@ -35,7 +35,7 @@ Levantamento funcional feito a partir da descrição pública do produto ([Aduan
 
 | Fase | Entrega                                                                                       | Situação                                                     |
 | ---- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| 0    | Validação das fontes com download real                                                        | Bloqueada: rede do ambiente                                  |
+| 0    | Validação das fontes com download real                                                        | ✅ Arquivos enviados manualmente; ver FONTES_DE_DADOS.md     |
 | 1    | Fundação: monorepo, banco, autenticação, layout, estrutura da NCM                             | ✅                                                           |
 | 2    | Pesquisa NCM: busca por código e descrição, página de detalhes, favoritos, histórico          | ✅                                                           |
 | 3    | Tributação: II, exceções e ex-tarifários, IPI, PIS/Cofins, CBS/IBS, histórico, simulador      | ✅ Estrutura, cargas e simulador; aguarda planilhas oficiais |

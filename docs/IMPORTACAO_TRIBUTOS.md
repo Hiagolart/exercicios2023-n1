@@ -18,11 +18,17 @@ Opções:
   muda e a planilha não traz a data de início: a nova alíquota começa nessa data e a anterior é
   encerrada na véspera. Esses registros aparecem como "deduzido da carga".
 
-O leitor procura a linha de cabeçalho com "NCM" e a coluna de alíquota ("ALÍQUOTA", "TEC" ou
-"II") nas primeiras 60 linhas. Linhas com código de 8 dígitos e alíquota viram registros; linhas
-com a coluna "EX" preenchida viram destaques Ex; capítulos e posições são ignorados.
+Na TIPI, o leitor procura a linha de cabeçalho com "NCM" e "ALÍQUOTA". Linhas com código de 8
+dígitos e alíquota viram registros; linhas com a coluna "EX" preenchida viram destaques Ex;
+capítulos e posições são ignorados.
 
-> O layout das planilhas oficiais ainda precisa ser conferido com os arquivos reais (Fase 0).
+Na planilha da Camex, o leitor combina as abas: a alíquota base do II vem do Anexo II quando a
+NCM consta nele e, senão, do Anexo I (TEC). As exceções dos Anexos IV, V, VI, VIII, IX e X viram
+exceções da NCM ou destaques Ex, com quota quando houver. Detalhes em
+[`FONTES_DE_DADOS.md`](FONTES_DE_DADOS.md).
+
+Cada carga é tratada como a lista completa da fonte: registros que deixam de aparecer são
+encerrados na véspera da data de referência (ou removidos, se ainda não tinham começado).
 
 ## Modelo próprio (CSV ou JSON)
 
@@ -69,4 +75,5 @@ legal citado. É uma transcrição manual, marcada na interface para conferênci
 
 ## Precedência na consulta
 
-Para cada tributo, na data consultada: exceção vigente → alíquota da NCM → regra geral.
+Para cada tributo, na data consultada: exceção vigente sem quota → alíquota da NCM → regra geral.
+Exceções limitadas a uma quota são exibidas à parte, porque valem só para o volume da quota.

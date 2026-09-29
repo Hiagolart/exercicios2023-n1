@@ -1,4 +1,4 @@
-import { isFullNcmCode, normalizeNcmCode } from "../ncm/code";
+import { isFullNcmCode, normalizeNcmCode, parseNcmCell } from "../ncm/code";
 import { normalizeEndDate, parseSourceDate } from "../shared/dates";
 import { err, ok, type Result } from "../shared/result";
 import type { ValidationIssue } from "../data-provider/types";
@@ -72,15 +72,17 @@ export function parseTaxTemplateRow(row: Row): Result<TaxDataRecord, ValidationI
       issues.push({ campo: "tributo", motivo: "Destaque Ex só existe para II e IPI." });
     if (!numero) issues.push({ campo: "numero_ex", motivo: "Número do Ex ausente." });
     if (!descricao) issues.push({ campo: "descricao_ex", motivo: "Descrição do Ex ausente." });
-    if (!("erro" in rate) && rate.tipo !== "ad_valorem")
-      issues.push({ campo: "aliquota", motivo: "Destaque Ex exige alíquota percentual." });
+    if (!("erro" in rate) && rate.tipo === "especifica")
+      issues.push({ campo: "aliquota", motivo: "Destaque Ex não aceita alíquota específica." });
+    if (!("erro" in rate) && rate.tipo === "nao_tributado" && tributo !== "IPI")
+      issues.push({ campo: "aliquota", motivo: "NT só se aplica a destaques do IPI." });
     if (
       issues.length > 0 ||
       !ncm ||
       !numero ||
       !descricao ||
       "erro" in rate ||
-      rate.aliquota === null
+      rate.tipo === "especifica"
     )
       return err(issues);
     return ok({
@@ -90,10 +92,14 @@ export function parseTaxTemplateRow(row: Row): Result<TaxDataRecord, ValidationI
         tributo: tributo as "II" | "IPI",
         numero,
         descricao,
+        tipo: rate.tipo,
         aliquota: rate.aliquota,
         vigenciaInicio: inicio ?? null,
         vigenciaFim: normalizeEndDate(fim ?? null),
         atoLegal,
+        lista: text(row.lista),
+        quota: text(row.quota),
+        observacao: text(row.observacao),
       },
     });
   }
@@ -124,8 +130,19 @@ export function parseTaxTemplateRow(row: Row): Result<TaxDataRecord, ValidationI
       vigenciaFim: normalizeEndDate(fim ?? null),
       atoLegal,
       observacao: text(row.observacao),
+      quota: text(row.quota),
     },
   });
+}
+
+/**
+ * Número de destaque Ex como aparece nas tabelas ("1", 1, "Ex 01", "Ex  04", "001").
+ * Retorna `null` quando não há destaque ("", "-").
+ */
+export function normalizeExNumber(raw: unknown): string | null {
+  const digits = text(raw)?.replace(/\D/g, "") ?? "";
+  if (digits === "") return null;
+  return digits.padStart(digits.length >= 3 ? digits.length : 2, "0");
 }
 
 /**
@@ -138,21 +155,21 @@ export function parseOfficialTableRow(
   ctx: { tributo: "II" | "IPI"; atoLegal: string | null },
 ): Result<TaxDataRecord, ValidationIssue[]> {
   const rawNcm = text(row.ncm);
-  const ncm = rawNcm ? normalizeNcmCode(rawNcm) : "";
+  const ncm = parseNcmCell(rawNcm) ?? "";
   const rawRate = text(row.aliquota);
   if (!isFullNcmCode(ncm) || rawRate === null) return ok({ kind: "ignorar" });
 
   const rate = parseRateValue(rawRate);
   if ("erro" in rate) return err([{ campo: "aliquota", motivo: `${rate.erro} (NCM ${rawNcm})` }]);
 
-  const ex = text(row.ex);
+  const ex = normalizeExNumber(row.ex);
   if (ex) {
     const descricao = text(row.descricao);
-    if (rate.tipo !== "ad_valorem" || rate.aliquota === null || !descricao) {
+    if (rate.tipo === "especifica" || !descricao) {
       return err([
         {
           campo: "ex",
-          motivo: `Destaque Ex ${ex} da NCM ${rawNcm} sem alíquota percentual ou descrição.`,
+          motivo: `Destaque Ex ${ex} da NCM ${rawNcm} sem alíquota válida ou descrição.`,
         },
       ]);
     }
@@ -161,12 +178,16 @@ export function parseOfficialTableRow(
       destaque: {
         ncm,
         tributo: ctx.tributo,
-        numero: ex.padStart(2, "0"),
+        numero: ex,
         descricao: descricao.replace(/^[\s\-–—]+/, ""),
+        tipo: rate.tipo,
         aliquota: rate.aliquota,
         vigenciaInicio: null,
         vigenciaFim: null,
         atoLegal: ctx.atoLegal,
+        lista: null,
+        quota: null,
+        observacao: null,
       },
     });
   }
@@ -184,6 +205,7 @@ export function parseOfficialTableRow(
       vigenciaFim: null,
       atoLegal: ctx.atoLegal,
       observacao: null,
+      quota: null,
     },
   });
 }

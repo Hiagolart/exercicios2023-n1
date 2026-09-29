@@ -40,6 +40,11 @@ export interface RateRecord {
   vigenciaFim: Date | null;
   atoLegal: string | null;
   observacao: string | null;
+  /**
+   * Quota à qual a alíquota se limita (ex.: "899.250 quilogramas"). Alíquotas com
+   * quota valem só para o volume da quota e não substituem a alíquota geral.
+   */
+  quota: string | null;
 }
 
 export interface ExTarifarioRecord {
@@ -47,8 +52,15 @@ export interface ExTarifarioRecord {
   tributo: "II" | "IPI";
   numero: string;
   descricao: string;
-  aliquota: number;
+  /** `nao_tributado` só ocorre em Ex da TIPI ("NT"). */
+  tipo: "ad_valorem" | "nao_tributado";
+  /** Percentual; `null` quando não tributado. */
+  aliquota: number | null;
   vigenciaInicio: Date | null;
   vigenciaFim: Date | null;
   atoLegal: string | null;
+  /** Lista de origem (ex.: "LETEC (Anexo V)"); `null` para ex-tarifário comum ou Ex da TIPI. */
+  lista: string | null;
+  quota: string | null;
+  observacao: string | null;
 }

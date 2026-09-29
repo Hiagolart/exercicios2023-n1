@@ -34,11 +34,7 @@ describe("detectColumns", () => {
 
 describe("OfficialTableProvider", () => {
   it("lê a planilha e separa alíquotas, destaques, linhas ignoradas e erros", async () => {
-    const provider = new OfficialTableProvider(
-      "IPI",
-      await writeSheet(TIPI_ROWS),
-      "Decreto de teste",
-    );
+    const provider = new OfficialTableProvider(await writeSheet(TIPI_ROWS), "Decreto de teste");
     const batch = await provider.read();
     const result = await validateTaxBatch(provider, batch.records);
 
@@ -56,7 +52,7 @@ describe("OfficialTableProvider", () => {
   });
 
   it("explica quando o cabeçalho não existe", async () => {
-    const provider = new OfficialTableProvider("II", await writeSheet([["Sem cabeçalho"]]), null);
+    const provider = new OfficialTableProvider(await writeSheet([["Sem cabeçalho"]]), null);
     await expect(provider.read()).rejects.toThrow("Cabeçalho não encontrado");
   });
 });

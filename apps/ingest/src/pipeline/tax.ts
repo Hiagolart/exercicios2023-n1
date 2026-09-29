@@ -11,7 +11,7 @@ import {
   applyRates,
   failIngestionRun,
   finishIngestionRun,
-  replaceDestaques,
+  syncDestaques,
   startIngestionRun,
   upsertDataSource,
   type PrismaClient,
@@ -92,14 +92,14 @@ export async function runTaxIngestion(
     const valid = await validateTaxBatch(provider, batch.records);
     const ctx = { sourceId: provider.source.id, runId, referencia };
     const rates = await applyRates(db, valid.rates, ctx);
-    const destaques = await replaceDestaques(db, valid.destaques, ctx);
+    const destaques = await syncDestaques(db, valid.destaques, ctx);
 
     const report: IngestionReport = {
       sourceId: provider.source.id,
       processados: valid.processados,
-      inseridos: rates.inseridos + destaques,
-      atualizados: rates.atualizados,
-      inalterados: rates.inalterados,
+      inseridos: rates.inseridos + destaques.inseridos,
+      atualizados: rates.atualizados + destaques.atualizados + destaques.removidos,
+      inalterados: rates.inalterados + destaques.inalterados,
       rejeitados: valid.rejected.length,
       ignorados: valid.ignorados,
       erros: valid.rejected,
